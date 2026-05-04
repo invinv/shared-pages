@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>เปรียบเทียบระบบกันขโมยบ้าน - ตลาดไทย</title>
+    <title>เปรียบเทียบระบบกันขโมยบ้าน - ตลาดไทย 2569</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -19,6 +19,84 @@
             --border-subtle: rgba(212, 175, 55, 0.15);
             --shadow-soft: 0 8px 24px rgba(0, 0, 0, 0.4);
             --shadow-deep: 0 20px 60px rgba(0, 0, 0, 0.6);
+        }
+
+        /* Table of Contents Sidebar */
+        .toc-sidebar {
+            position: fixed;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: linear-gradient(135deg, var(--dark-secondary) 0%, var(--dark-tertiary) 100%);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 25px 20px;
+            width: 220px;
+            max-height: 70vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-soft);
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .toc-sidebar h4 {
+            color: var(--accent-gold);
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .toc-list {
+            list-style: none;
+        }
+
+        .toc-list li {
+            margin-bottom: 10px;
+        }
+
+        .toc-list a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9em;
+            padding: 8px 12px;
+            border-left: 3px solid transparent;
+            display: block;
+            transition: all 0.3s ease;
+            border-radius: 4px;
+        }
+
+        .toc-list a:hover {
+            color: var(--accent-gold);
+            border-left-color: var(--accent-gold);
+            background: rgba(212, 175, 55, 0.1);
+            padding-left: 16px;
+        }
+
+        .toc-list a.active {
+            color: var(--accent-gold);
+            border-left-color: var(--accent-gold);
+            background: rgba(212, 175, 55, 0.15);
+            font-weight: 600;
+            padding-left: 16px;
+        }
+
+        .toc-sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .toc-sidebar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .toc-sidebar::-webkit-scrollbar-thumb {
+            background: var(--accent-gold);
+            border-radius: 3px;
+        }
+
+        .toc-sidebar::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-copper);
         }
 
         * {
@@ -42,7 +120,6 @@
             position: relative;
         }
 
-        /* Animated background elements */
         body::before {
             content: '';
             position: fixed;
@@ -86,14 +163,13 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background:
-                repeating-linear-gradient(
-                    90deg,
-                    transparent,
-                    transparent 2px,
-                    rgba(212, 175, 55, 0.03) 2px,
-                    rgba(212, 175, 55, 0.03) 4px
-                );
+            background: repeating-linear-gradient(
+                90deg,
+                transparent,
+                transparent 2px,
+                rgba(212, 175, 55, 0.03) 2px,
+                rgba(212, 175, 55, 0.03) 4px
+            );
             opacity: 0.5;
         }
 
@@ -169,14 +245,61 @@
             background: linear-gradient(90deg, var(--accent-gold), var(--accent-copper), transparent);
         }
 
+        section h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6em;
+            color: var(--accent-gold);
+            margin: 40px 0 25px 0;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 50px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--dark-secondary) 0%, var(--dark-tertiary) 100%);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: var(--shadow-soft);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            border-color: var(--accent-gold);
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+        }
+
+        .stat-number {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5em;
+            color: var(--accent-gold);
+            font-weight: 900;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.95em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
         .comparison-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
             margin-bottom: 60px;
         }
 
-        .system-card {
+        .system-card, .provider-card, .price-card {
             background: linear-gradient(135deg, var(--dark-secondary) 0%, var(--dark-tertiary) 100%);
             border: 1px solid var(--border-subtle);
             border-radius: 12px;
@@ -187,7 +310,7 @@
             box-shadow: var(--shadow-soft);
         }
 
-        .system-card::before {
+        .system-card::before, .provider-card::before, .price-card::before {
             content: '';
             position: absolute;
             top: 0;
@@ -199,7 +322,7 @@
             transition: opacity 0.4s ease;
         }
 
-        .system-card:hover {
+        .system-card:hover, .provider-card:hover, .price-card:hover {
             border-color: var(--accent-gold);
             box-shadow:
                 0 0 20px rgba(212, 175, 55, 0.3),
@@ -208,11 +331,11 @@
             background: linear-gradient(135deg, var(--dark-tertiary) 0%, rgba(212, 175, 55, 0.05) 100%);
         }
 
-        .system-card:hover::before {
+        .system-card:hover::before, .provider-card:hover::before, .price-card:hover::before {
             opacity: 1;
         }
 
-        .system-card h3 {
+        .card-title {
             color: var(--accent-gold);
             font-size: 1.6em;
             margin-bottom: 18px;
@@ -229,7 +352,7 @@
             filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
         }
 
-        .price {
+        .price, .badge {
             background: linear-gradient(135deg, var(--accent-gold) 0%, var(--accent-copper) 100%);
             color: var(--dark-bg);
             padding: 12px 18px;
@@ -243,7 +366,7 @@
             transition: transform 0.3s ease;
         }
 
-        .system-card:hover .price {
+        .system-card:hover .price, .provider-card:hover .price {
             transform: scale(1.05);
         }
 
@@ -357,16 +480,63 @@
             background: rgba(212, 175, 55, 0.05);
         }
 
-        .use-case {
-            font-weight: 600;
-            color: var(--accent-gold);
-            width: 40%;
+        .provider-link {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--accent-gold) 0%, var(--accent-copper) 100%);
+            color: var(--dark-bg);
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.25);
+            letter-spacing: 0.3px;
+            text-align: center;
         }
 
-        .recommendation {
-            color: #81c784;
+        .provider-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+        }
+
+        .providers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 60px;
+        }
+
+        .provider-card {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .provider-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4em;
+            color: var(--accent-gold);
+            margin-bottom: 10px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .provider-category {
+            font-size: 0.85em;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 18px;
             font-weight: 600;
-            font-size: 1em;
+        }
+
+        .provider-description {
+            font-size: 0.95em;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 20px;
+            flex-grow: 1;
         }
 
         .features-list {
@@ -410,6 +580,80 @@
             color: var(--accent-gold);
         }
 
+        .faq-item {
+            background: linear-gradient(135deg, var(--dark-secondary) 0%, var(--dark-tertiary) 100%);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .faq-question {
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(184, 115, 51, 0.05) 100%);
+            color: var(--accent-gold);
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .faq-question:hover {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(184, 115, 51, 0.1) 100%);
+        }
+
+        .faq-toggle {
+            font-size: 1.5em;
+            transition: transform 0.3s ease;
+        }
+
+        .faq-item.active .faq-toggle {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            padding: 0 20px;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            color: var(--text-secondary);
+        }
+
+        .faq-item.active .faq-answer {
+            padding: 20px;
+            max-height: 500px;
+        }
+
+        .insight-card {
+            background: linear-gradient(135deg, var(--dark-secondary) 0%, var(--dark-tertiary) 100%);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .insight-title {
+            color: var(--accent-gold);
+            font-weight: 700;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .insight-text {
+            color: var(--text-secondary);
+            font-size: 0.95em;
+        }
+
+        .divider {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent-gold), transparent);
+            margin: 60px 0;
+            opacity: 0.5;
+        }
+
         footer {
             background: linear-gradient(135deg, var(--dark-secondary) 0%, var(--dark-tertiary) 100%);
             padding: 60px 40px;
@@ -432,136 +676,11 @@
             letter-spacing: -0.5px;
         }
 
-        .badge {
-            display: inline-block;
-            background: linear-gradient(135deg, var(--accent-gold) 0%, var(--accent-copper) 100%);
-            color: var(--dark-bg);
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 0.8em;
-            margin-top: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2);
-        }
-
-        /* Providers Grid */
-        .providers-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
-            margin-bottom: 60px;
-        }
-
-        .provider-card {
-            background: linear-gradient(135deg, var(--dark-secondary) 0%, var(--dark-tertiary) 100%);
-            border: 1px solid var(--border-subtle);
-            border-radius: 12px;
-            padding: 28px;
-            transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
-            position: relative;
-            overflow: hidden;
-            box-shadow: var(--shadow-soft);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .provider-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--accent-gold), transparent);
-            opacity: 0;
-            transition: opacity 0.4s ease;
-        }
-
-        .provider-card:hover {
-            border-color: var(--accent-gold);
-            box-shadow:
-                0 0 20px rgba(212, 175, 55, 0.3),
-                var(--shadow-deep);
-            transform: translateY(-8px);
-            background: linear-gradient(135deg, var(--dark-tertiary) 0%, rgba(212, 175, 55, 0.05) 100%);
-        }
-
-        .provider-card:hover::before {
-            opacity: 1;
-        }
-
-        .provider-name {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.4em;
-            color: var(--accent-gold);
-            margin-bottom: 10px;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-        }
-
-        .provider-category {
-            font-size: 0.85em;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 18px;
-            font-weight: 600;
-        }
-
-        .provider-description {
-            font-size: 0.95em;
-            color: var(--text-secondary);
-            line-height: 1.6;
-            margin-bottom: 20px;
-            flex-grow: 1;
-        }
-
-        .provider-link {
-            display: inline-block;
-            background: linear-gradient(135deg, var(--accent-gold) 0%, var(--accent-copper) 100%);
-            color: var(--dark-bg);
-            padding: 12px 24px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 0.9em;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.25);
-            letter-spacing: 0.3px;
-            text-align: center;
-        }
-
-        .provider-link:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
-        }
-
-        /* Divider line */
-        .divider {
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--accent-gold), transparent);
-            margin: 60px 0;
-            opacity: 0.5;
-        }
-
-        /* Scroll animation for sections */
-        @media (prefers-reduced-motion: no-preference) {
-            section {
-                opacity: 0;
-                animation: fadeInSection 0.8s ease-out forwards;
+        @media (max-width: 1024px) {
+            .toc-sidebar {
+                display: none;
             }
 
-            section:nth-child(2) { animation-delay: 0.2s; }
-            section:nth-child(3) { animation-delay: 0.3s; }
-            section:nth-child(4) { animation-delay: 0.4s; }
-            section:nth-child(5) { animation-delay: 0.5s; }
-            section:nth-child(6) { animation-delay: 0.6s; }
-        }
-
-        @media (max-width: 1024px) {
             header h1 {
                 font-size: 2.8em;
             }
@@ -598,7 +717,7 @@
                 margin-bottom: 30px;
             }
 
-            .comparison-grid {
+            .comparison-grid, .stats-grid, .providers-grid {
                 gap: 20px;
             }
 
@@ -619,7 +738,6 @@
             }
         }
 
-        /* Smooth scroll behavior */
         ::-webkit-scrollbar {
             width: 10px;
         }
@@ -639,21 +757,75 @@
     </style>
 </head>
 <body>
+    <!-- Table of Contents Sidebar -->
+    <nav class="toc-sidebar">
+        <h4>📑 สารบัญ</h4>
+        <ul class="toc-list">
+            <li><a href="#section-overview">Executive Summary</a></li>
+            <li><a href="#section-types">ประเภทระบบ</a></li>
+            <li><a href="#section-prices">ช่วงราคา</a></li>
+            <li><a href="#section-top-picks">Top Picks</a></li>
+            <li><a href="#section-comparison">เปรียบเทียบ</a></li>
+            <li><a href="#section-providers">ผู้ให้บริการ</a></li>
+            <li><a href="#section-feature-matrix">Feature Matrix</a></li>
+            <li><a href="#section-features">ฟีเจอร์</a></li>
+            <li><a href="#section-recommendations">คำแนะนำ</a></li>
+            <li><a href="#section-faq">FAQ</a></li>
+            <li><a href="#section-insights">Market Insights</a></li>
+        </ul>
+    </nav>
+
     <div class="container">
         <header>
             <h1>🏠 เปรียบเทียบระบบกันขโมยบ้าน</h1>
-            <p>สรุปตัวเลือกครบครันในตลาดไทย พร้อมคำแนะนำที่เหมาะสม</p>
+            <p>ระบบกันขโมยครบครัน 34 ผู้ให้บริการ - วิจัยตลาดไทย 2569</p>
         </header>
 
         <main>
-            <!-- ระบบกันขโมย 5 ประเภท -->
-            <section>
+            <!-- EXECUTIVE SUMMARY -->
+            <section id="section-overview">
+                <h2>📊 Executive Summary - ภาพรวมตลาด</h2>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number">34</div>
+                        <div class="stat-label">ผู้ให้บริการ</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">5</div>
+                        <div class="stat-label">ประเภทระบบ</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">3,000-40,000+</div>
+                        <div class="stat-label">ช่วงราคา (บาท)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">4</div>
+                        <div class="stat-label">หมวดหมู่ผู้ให้บริการ</div>
+                    </div>
+                </div>
+
+                <div class="features-list" style="margin-top: 40px;">
+                    <h3>🔍 Key Findings</h3>
+                    <ul>
+                        <li><strong>ตลาดที่กำลังเติบโต:</strong> ระบบ Smart Home DIY เพิ่มขึ้น ขณะที่ Professional Monitoring ยังเป็นที่นิยมสำหรับอาคารใหญ่</li>
+                        <li><strong>ความหลากหลาย:</strong> ผู้ให้บริการ 8 แห่งมาจากต่างประเทศ (OPTEX, Ajax, Honeywell, Bosch, DSC, Risco, Paradox, Hikvision)</li>
+                        <li><strong>ความปลอดภัยในระดับสูง:</strong> บริการ 24/7 monitoring มี 6+ ผู้ให้บริการเสนอ</li>
+                        <li><strong>ราคาที่ประหยัด:</strong> ระบบ DIY เริ่มจาก 3,000 บาท เท่านั้น</li>
+                        <li><strong>การครอบคลุมภูมิศาสตร์:</strong> ปักษ์ใหญ่มีบริการไทยแบบ nationwide ที่ครอบคลุมแม้แต่ต่างจังหวัด</li>
+                    </ul>
+                </div>
+            </section>
+
+            <div class="divider"></div>
+
+            <!-- SYSTEM TYPES -->
+            <section id="section-types">
                 <h2>ประเภทระบบกันขโมยบ้าน</h2>
 
                 <div class="comparison-grid">
-                    <!-- Wireless -->
                     <div class="system-card">
-                        <h3><span class="emoji">📡</span>แบบไร้สาย</h3>
+                        <h3 class="card-title"><span class="emoji">📡</span>แบบไร้สาย</h3>
                         <div class="price">~10,500 - 17,900 บาท</div>
                         <div class="pros">
                             <h4>จุดเด่น</h4>
@@ -674,9 +846,8 @@
                         <span class="badge">ยอดนิยม</span>
                     </div>
 
-                    <!-- Wired -->
                     <div class="system-card">
-                        <h3><span class="emoji">🔌</span>แบบเดินสาย</h3>
+                        <h3 class="card-title"><span class="emoji">🔌</span>แบบเดินสาย</h3>
                         <div class="price">~15,000+ บาท</div>
                         <div class="pros">
                             <h4>จุดเด่น</h4>
@@ -696,9 +867,8 @@
                         </div>
                     </div>
 
-                    <!-- OPTEX -->
                     <div class="system-card">
-                        <h3><span class="emoji">🇯🇵</span>OPTEX ญี่ปุ่น</h3>
+                        <h3 class="card-title"><span class="emoji">🇯🇵</span>OPTEX ญี่ปุ่น</h3>
                         <div class="price">~20,000+ บาท</div>
                         <div class="pros">
                             <h4>จุดเด่น</h4>
@@ -718,9 +888,8 @@
                         </div>
                     </div>
 
-                    <!-- Smart Home DIY -->
                     <div class="system-card">
-                        <h3><span class="emoji">📱</span>Smart Home DIY</h3>
+                        <h3 class="card-title"><span class="emoji">📱</span>Smart Home DIY</h3>
                         <div class="price">~3,000 - 8,000 บาท</div>
                         <div class="pros">
                             <h4>จุดเด่น</h4>
@@ -740,9 +909,8 @@
                         </div>
                     </div>
 
-                    <!-- Professional Monitoring -->
                     <div class="system-card">
-                        <h3><span class="emoji">👮</span>Monitoring มืออาชีพ</h3>
+                        <h3 class="card-title"><span class="emoji">👮</span>Monitoring มืออาชีพ</h3>
                         <div class="price">~20,000+ บาท + บริการรายเดือน</div>
                         <div class="pros">
                             <h4>จุดเด่น</h4>
@@ -766,8 +934,140 @@
 
             <div class="divider"></div>
 
-            <!-- ตารางเปรียบเทียบ -->
-            <section>
+            <!-- PRICE SEGMENTATION -->
+            <section id="section-prices">
+                <h2>💰 การจัดแบ่งตามช่วงราคา</h2>
+
+                <div class="comparison-grid">
+                    <div class="price-card">
+                        <h3 class="card-title"><span class="emoji">🔴</span>Budget</h3>
+                        <div class="price">3,000 - 8,000 บาท</div>
+                        <div class="features">
+                            <li><strong>ประเภท:</strong> Smart Home DIY</li>
+                            <li><strong>ผู้ให้บริการ:</strong> Xiaomi, Aqara, TP-Link, EZVIZ</li>
+                            <li><strong>จุดเด่น:</strong> ประหยัด ติดตั้งเองได้</li>
+                            <li><strong>ข้อจำกัด:</strong> ไม่มี monitoring มืออาชีพ</li>
+                        </div>
+                    </div>
+
+                    <div class="price-card">
+                        <h3 class="card-title"><span class="emoji">🟡</span>Mid-Range</h3>
+                        <div class="price">8,000 - 15,000 บาท</div>
+                        <div class="features">
+                            <li><strong>ประเภท:</strong> Wireless Systems</li>
+                            <li><strong>ผู้ให้บริการ:</strong> JL Home, SMART PLUS+</li>
+                            <li><strong>จุดเด่น:</strong> ดีทั่วไป ติดตั้งง่าย</li>
+                            <li><strong>ข้อจำกัด:</strong> ฟีเจอร์น้อยกว่า premium</li>
+                        </div>
+                    </div>
+
+                    <div class="price-card">
+                        <h3 class="card-title"><span class="emoji">🟢</span>Premium</h3>
+                        <div class="price">15,000 - 30,000 บาท</div>
+                        <div class="features">
+                            <li><strong>ประเภท:</strong> Wired / Professional Wireless</li>
+                            <li><strong>ผู้ให้บริการ:</strong> DSC, Paradox, OPTEX</li>
+                            <li><strong>จุดเด่น:</strong> เสถียร ฟีเจอร์ครบ</li>
+                            <li><strong>ข้อจำกัด:</strong> ติดตั้งซับซ้อน</li>
+                        </div>
+                    </div>
+
+                    <div class="price-card">
+                        <h3 class="card-title"><span class="emoji">👑</span>Professional</h3>
+                        <div class="price">20,000+ + 500-2,000 บาท/เดือน</div>
+                        <div class="features">
+                            <li><strong>ประเภท:</strong> 24/7 Monitoring</li>
+                            <li><strong>ผู้ให้บริการ:</strong> SECOM, G4S, Titan, Chubb</li>
+                            <li><strong>จุดเด่น:</strong> เจ้าหน้าที่ 24/7 ความปลอดภัยสูงสุด</li>
+                            <li><strong>ข้อจำกัด:</strong> ค่าบริการรายเดือน สัญญายาว</li>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <div class="divider"></div>
+
+            <!-- TOP PICKS BY CATEGORY -->
+            <section id="section-top-picks">
+                <h2>🏅 Top Picks ตามประเภท</h2>
+
+                <h3>Wireless Systems (ยอดนิยม)</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>อันดับที่ 1</th>
+                            <th>อันดับที่ 2</th>
+                            <th>อันดับที่ 3</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>SMART PLUS+</strong><br>Wi-Fi + 4G, สำรองไฟ 8-12 ชม., Anti-Jammer<br>~17,900 บาท</td>
+                            <td><strong>JL Home</strong><br>โทรแจ้ง 5 เบอร์, 24 เซ็นเซอร์<br>~10,487 บาท</td>
+                            <td><strong>Ajax Systems</strong><br>RF Jeweller protocol, สไตล์ยุโรป<br>~12,000-15,000 บาท</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Wired/Professional Systems</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>อันดับที่ 1</th>
+                            <th>อันดับที่ 2</th>
+                            <th>อันดับที่ 3</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>OPTEX Thailand</strong><br>ตรวจจับนอกบ้าน, perimeter detection<br>~20,000+ บาท</td>
+                            <td><strong>DSC NEO</strong><br>เสถียรสูง, บ้านใหญ่<br>~15,000+ บาท</td>
+                            <td><strong>Bangkok Alarm Systems</strong><br>Honeywell wired, ติดตั้งโปรแกรมมาตรฐาน<br>~15,000-20,000 บาท</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>24/7 Professional Monitoring</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>อันดับที่ 1</th>
+                            <th>อันดับที่ 2</th>
+                            <th>อันดับที่ 3</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>SECOM Thailand</strong><br>ผู้ให้บริการ #1, ครอบคลุมทั้งประเทศ<br>~25,000+ + 800+ บาท/เดือน</td>
+                            <td><strong>G4S Secure Solutions</strong><br>ISO-certified, CCTV + Alarm<br>~20,000+ + 700+ บาท/เดือน</td>
+                            <td><strong>Chubb Thailand</strong><br>ระดับสากล, ประกันและ monitoring<br>~22,000+ + 750+ บาท/เดือน</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Smart Home DIY (ประหยัด)</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>อันดับที่ 1</th>
+                            <th>อันดับที่ 2</th>
+                            <th>อันดับที่ 3</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Aqara Thailand</strong><br>Zigbee 3.0, HomeKit compatible<br>~3,500-5,000 บาท</td>
+                            <td><strong>TP-Link Tapo</strong><br>Wi-Fi, รองรับ Google/Alexa<br>~3,500-6,000 บาท</td>
+                            <td><strong>Xiaomi Mi Home</strong><br>ระบบ Zigbee, app ไทย<br>~3,000-5,500 บาท</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <div class="divider"></div>
+
+            <!-- DETAILED COMPARISON TABLE -->
+            <section id="section-comparison">
                 <h2>📊 ตารางเปรียบเทียบรายละเอียด</h2>
                 <table>
                     <thead>
@@ -855,10 +1155,16 @@
                         </tr>
                     </tbody>
                 </table>
+            </section>
 
-                <h3 style="font-size: 1.5em; color: var(--accent-gold); margin-top: 60px; margin-bottom: 30px; font-family: 'Playfair Display', serif; letter-spacing: -0.5px;">👥 ผู้ให้บริการแนะนำ (34 ผู้ให้บริการ)</h3>
+            <div class="divider"></div>
+
+            <!-- 34 PROVIDERS -->
+            <section id="section-providers">
+                <h2>👥 ผู้ให้บริการทั้ง 34 รายที่สำเร็จการศึกษา</h2>
+
+                <h3>Professional Monitoring & Wired Systems (8 ผู้ให้บริการ)</h3>
                 <div class="providers-grid">
-                    <!-- Professional Monitoring & Wired Systems -->
                     <div class="provider-card">
                         <div>
                             <div class="provider-name">SECOM Thailand</div>
@@ -930,17 +1236,10 @@
                         </div>
                         <a href="https://www.digitalhomesecurity.net/" target="_blank" class="provider-link">เยี่ยมชม</a>
                     </div>
+                </div>
 
-                    <div class="provider-card">
-                        <div>
-                            <div class="provider-name">SmartSecurity Thailand</div>
-                            <div class="provider-category">Wired & Wireless</div>
-                            <div class="provider-description">Integrator ระบบ Alarm + AI CCTV + Home Automation ระดับสูง</div>
-                        </div>
-                        <a href="https://www.smartsecurity.in.th/" target="_blank" class="provider-link">เยี่ยมชม</a>
-                    </div>
-
-                    <!-- Wireless Systems - Thai Local Brands -->
+                <h3>Wireless Systems - Thai Local Brands (6 ผู้ให้บริการ)</h3>
+                <div class="providers-grid">
                     <div class="provider-card">
                         <div>
                             <div class="provider-name">SMART PLUS+</div>
@@ -994,17 +1293,10 @@
                         </div>
                         <a href="https://sktsecurity.co.th/" target="_blank" class="provider-link">เยี่ยมชม</a>
                     </div>
+                </div>
 
-                    <div class="provider-card">
-                        <div>
-                            <div class="provider-name">Chubb Thailand</div>
-                            <div class="provider-category">Wireless Monitoring</div>
-                            <div class="provider-description">ผู้ให้บริการประกันและ monitored alarm ระดับสากล</div>
-                        </div>
-                        <a href="https://www.chubbfs.com/th-en/" target="_blank" class="provider-link">เยี่ยมชม</a>
-                    </div>
-
-                    <!-- International Wireless Brands -->
+                <h3>International Wireless Brands (7 ผู้ให้บริการ)</h3>
+                <div class="providers-grid">
                     <div class="provider-card">
                         <div>
                             <div class="provider-name">Ajax Systems</div>
@@ -1077,7 +1369,18 @@
                         <a href="https://www.riscogroup.com/" target="_blank" class="provider-link">เยี่ยมชม</a>
                     </div>
 
-                    <!-- Consumer Smart Home DIY Brands -->
+                    <div class="provider-card">
+                        <div>
+                            <div class="provider-name">Chubb Thailand</div>
+                            <div class="provider-category">Wireless Monitoring</div>
+                            <div class="provider-description">ผู้ให้บริการประกันและ monitored alarm ระดับสากล</div>
+                        </div>
+                        <a href="https://www.chubbfs.com/th-en/" target="_blank" class="provider-link">เยี่ยมชม</a>
+                    </div>
+                </div>
+
+                <h3>Consumer Smart Home DIY Brands (7 ผู้ให้บริการ)</h3>
+                <div class="providers-grid">
                     <div class="provider-card">
                         <div>
                             <div class="provider-name">Xiaomi Mi Home</div>
@@ -1149,13 +1452,145 @@
                         </div>
                         <a href="https://www.xn--o3ctbg7a1az4ktd.com/" target="_blank" class="provider-link">เยี่ยมชม</a>
                     </div>
+
+                    <div class="provider-card">
+                        <div>
+                            <div class="provider-name">SmartSecurity Thailand</div>
+                            <div class="provider-category">Wired & Wireless</div>
+                            <div class="provider-description">Integrator ระบบ Alarm + AI CCTV + Home Automation ระดับสูง</div>
+                        </div>
+                        <a href="https://www.smartsecurity.in.th/" target="_blank" class="provider-link">เยี่ยมชม</a>
+                    </div>
                 </div>
             </section>
 
             <div class="divider"></div>
 
-            <!-- ฟีเจอร์ที่ควรมี -->
-            <section>
+            <!-- FEATURE COMPARISON MATRIX -->
+            <section id="section-feature-matrix">
+                <h2>⚙️ Feature Comparison Matrix - ผู้ให้บริการชั้นนำ 10 รายที่สำคัญ</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ผู้ให้บริการ</th>
+                            <th>ประเภท</th>
+                            <th>24/7 Monitoring</th>
+                            <th>ควบคุมแอป</th>
+                            <th>Backup 4G</th>
+                            <th>ติดตั้ง DIY</th>
+                            <th>ราคาเริ่มต้น</th>
+                            <th>ความนิยม</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>SECOM Thailand</strong></td>
+                            <td>Professional</td>
+                            <td>✅ ใช่</td>
+                            <td>✅ ใช่</td>
+                            <td>✅ ใช่</td>
+                            <td>❌ ไม่</td>
+                            <td>~25,000+ บาท</td>
+                            <td>⭐⭐⭐⭐⭐</td>
+                        </tr>
+                        <tr>
+                            <td><strong>SMART PLUS+</strong></td>
+                            <td>Wireless</td>
+                            <td>✅ ทางโทร</td>
+                            <td>✅ ใช่</td>
+                            <td>✅ ใช่</td>
+                            <td>✅ ใช่</td>
+                            <td>~17,900 บาท</td>
+                            <td>⭐⭐⭐⭐⭐</td>
+                        </tr>
+                        <tr>
+                            <td><strong>JL Home</strong></td>
+                            <td>Wireless</td>
+                            <td>✅ ทางโทร</td>
+                            <td>⭐ ปานกลาง</td>
+                            <td>❌ ไม่</td>
+                            <td>✅ ใช่</td>
+                            <td>~10,487 บาท</td>
+                            <td>⭐⭐⭐⭐</td>
+                        </tr>
+                        <tr>
+                            <td><strong>OPTEX Thailand</strong></td>
+                            <td>Outdoor</td>
+                            <td>✅ ใช่</td>
+                            <td>✅ ใช่</td>
+                            <td>❌ ไม่</td>
+                            <td>❌ ไม่</td>
+                            <td>~20,000+ บาท</td>
+                            <td>⭐⭐⭐⭐</td>
+                        </tr>
+                        <tr>
+                            <td><strong>G4S Secure Solutions</strong></td>
+                            <td>Professional</td>
+                            <td>✅ ใช่</td>
+                            <td>✅ ใช่</td>
+                            <td>✅ ใช่</td>
+                            <td>❌ ไม่</td>
+                            <td>~20,000+ บาท</td>
+                            <td>⭐⭐⭐⭐</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Ajax Systems</strong></td>
+                            <td>Wireless</td>
+                            <td>⭐ ผ่านพาร์ทเนอร์</td>
+                            <td>✅ ใช่</td>
+                            <td>❌ ไม่</td>
+                            <td>✅ ใช่</td>
+                            <td>~12,000-15,000 บาท</td>
+                            <td>⭐⭐⭐⭐</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Aqara Thailand</strong></td>
+                            <td>DIY</td>
+                            <td>❌ ไม่</td>
+                            <td>✅ ใช่</td>
+                            <td>❌ ไม่</td>
+                            <td>✅ ใช่</td>
+                            <td>~3,500-5,000 บาท</td>
+                            <td>⭐⭐⭐⭐</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Bangkok Alarm Systems</strong></td>
+                            <td>Wired</td>
+                            <td>✅ ทางโทร</td>
+                            <td>⭐ ปานกลาง</td>
+                            <td>❌ ไม่</td>
+                            <td>❌ ไม่</td>
+                            <td>~15,000-20,000 บาท</td>
+                            <td>⭐⭐⭐⭐</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Honeywell Home</strong></td>
+                            <td>Wireless</td>
+                            <td>⭐ ผ่านพาร์ทเนอร์</td>
+                            <td>✅ ใช่</td>
+                            <td>⭐ บางรุ่น</td>
+                            <td>⭐ บางรุ่น</td>
+                            <td>~12,000-18,000 บาท</td>
+                            <td>⭐⭐⭐</td>
+                        </tr>
+                        <tr>
+                            <td><strong>DSC (Johnson Controls)</strong></td>
+                            <td>Wireless</td>
+                            <td>⭐ ผ่านพาร์ทเนอร์</td>
+                            <td>✅ ใช่</td>
+                            <td>✅ ใช่</td>
+                            <td>❌ ไม่</td>
+                            <td>~15,000+ บาท</td>
+                            <td>⭐⭐⭐⭐</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <div class="divider"></div>
+
+            <!-- REQUIRED FEATURES -->
+            <section id="section-features">
                 <h2>✅ ฟีเจอร์ที่ควรมีในระบบที่ดี</h2>
                 <div class="features-list">
                     <h3>องค์ประกอบสำคัญ</h3>
@@ -1172,36 +1607,42 @@
 
             <div class="divider"></div>
 
-            <!-- ตัวเลือกเหมาะสม -->
-            <section>
-                <h2>🎯 ตัวเลือกเหมาะสมตามความต้องการ</h2>
-                <table class="decision-table">
+            <!-- RECOMMENDATIONS -->
+            <section id="section-recommendations">
+                <h2>🎯 คำแนะนำตามความต้องการ</h2>
+                <table>
                     <thead>
                         <tr>
                             <th>ความต้องการ</th>
                             <th>แนะนำ</th>
+                            <th>ราคา</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td class="use-case">ติดตั้งเองง่าย<br>งบไม่เกิน 15,000 บาท</td>
-                            <td class="recommendation">✅ JL Home หรือ Smart Home DIY</td>
+                            <td><strong>ติดตั้งเองง่าย</strong><br>งบไม่เกิน 15,000 บาท</td>
+                            <td>✅ JL Home หรือ Aqara DIY</td>
+                            <td>~10,500-15,000 บาท</td>
                         </tr>
                         <tr>
-                            <td class="use-case">ต้องการครบวงจร<br>เสถียร แจ้งผ่านมือถือ</td>
-                            <td class="recommendation">✅ SMART PLUS+ (Wi-Fi + 4G)</td>
+                            <td><strong>ต้องการครบวงจร</strong><br>เสถียร แจ้งผ่านมือถือ</td>
+                            <td>✅ SMART PLUS+ (Wi-Fi + 4G)</td>
+                            <td>~17,900 บาท</td>
                         </tr>
                         <tr>
-                            <td class="use-case">บ้านใหญ่<br>ตรวจจับนอกบ้าน</td>
-                            <td class="recommendation">✅ OPTEX + DSC NEO</td>
+                            <td><strong>บ้านใหญ่</strong><br>ตรวจจับนอกบ้าน</td>
+                            <td>✅ OPTEX + DSC NEO</td>
+                            <td>~20,000-30,000 บาท</td>
                         </tr>
                         <tr>
-                            <td class="use-case">ต้องการเจ้าหน้าที่<br>ดูแล 24/7</td>
-                            <td class="recommendation">✅ SECOM Thailand</td>
+                            <td><strong>ต้องการเจ้าหน้าที่</strong><br>ดูแล 24/7</td>
+                            <td>✅ SECOM Thailand</td>
+                            <td>~25,000+ บาท + 800+ บาท/เดือน</td>
                         </tr>
                         <tr>
-                            <td class="use-case">ต้องการสูงสุด<br>ควบคุมการเข้า-ออก</td>
-                            <td class="recommendation">✅ SECOM (สแกนลายนิ้วมือ + คีย์การ์ด)</td>
+                            <td><strong>ต้องการประหยัด</strong><br>ติดตั้งเองได้</td>
+                            <td>✅ Xiaomi Mi, TP-Link Tapo, Aqara</td>
+                            <td>~3,500-8,000 บาท</td>
                         </tr>
                     </tbody>
                 </table>
@@ -1209,59 +1650,221 @@
 
             <div class="divider"></div>
 
-            <!-- แนะนำยี่ห้อ -->
-            <section>
-                <h2>🏆 ยี่ห้อแนะนำตามประเภท</h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ประเภท</th>
-                            <th>ยี่ห้อ</th>
-                            <th>จุดเด่น</th>
-                            <th>ราคา</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><strong>Wireless</strong></td>
-                            <td>SMART PLUS+</td>
-                            <td>Wi-Fi + 4G SIM, สำรองไฟ 8-12 ชม., Anti-Jammer</td>
-                            <td>~17,900 บาท</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Wireless</strong></td>
-                            <td>JL Home</td>
-                            <td>โทรแจ้ง 5 เบอร์, 24 เซ็นเซอร์</td>
-                            <td>~10,487 บาท</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Wired</strong></td>
-                            <td>DSC NEO</td>
-                            <td>เสถียรสูง, สำหรับบ้านใหญ่</td>
-                            <td>~15K+ บาท</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Outdoor</strong></td>
-                            <td>OPTEX (ญี่ปุ่น)</td>
-                            <td>ตรวจจับนอกบ้าน, ลด False Alarm</td>
-                            <td>~20K+ บาท</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Professional</strong></td>
-                            <td>SECOM Thailand</td>
-                            <td>เจ้าหน้าที่ 24/7, สแกนลายนิ้ว</td>
-                            <td>~20K+ + บริการรายเดือน</td>
-                        </tr>
-                    </tbody>
-                </table>
+            <!-- FAQ SECTION -->
+            <section id="section-faq">
+                <h2>❓ คำถามที่พบบ่อย (FAQ)</h2>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>ระบบไร้สายกับเดินสาย อันไหนดีกว่า?</span>
+                        <span class="faq-toggle">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        ขึ้นอยู่กับสถานการณ์:
+                        <ul style="margin-top: 10px;">
+                            <li><strong>ไร้สาย:</strong> เหมาะบ้านสร้างเสร็จแล้ว ติดตั้งง่าย ไม่ต้องเดินสาย</li>
+                            <li><strong>เดินสาย:</strong> เหมาะบ้านใหญ่หรือก่อสร้าง/รีโนเวท เสถียรกว่า</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>ผู้ให้บริการ 24/7 ดีสุดในไทย คือใคร?</span>
+                        <span class="faq-toggle">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <strong>SECOM Thailand</strong> คือผู้ให้บริการอันดับ 1 ด้วยประสบการณ์ 40+ ปี มีเจ้าหน้าที่ 24/7 ครอบคลุมทั่วประเทศ บริการเสริมรวม CCTV และ Access Control ด้วย ทางเลือกอื่น: G4S, Chubb, Titan Security Global
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>ระบบ Smart Home DIY ปลอดภัยพอหรือเปล่า?</span>
+                        <span class="faq-toggle">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        ปลอดภัยเพียงพอสำหรับบ้านเล็ก-กลาง แต่ <strong>ข้อจำกัด:</strong> ไม่มีการ monitoring 24/7 ต้องอาศัยสัญญาณอินเทอร์เน็ต ไม่มีการสนับสนุนบริการหลังการขายแบบมืออาชีพ เหมาะสำหรับผู้ที่พร้อมตรวจสอบโดยตนเอง
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>ติดตั้งระบบประมาณเท่าไร ค่าติดตั้ง?</span>
+                        <span class="faq-toggle">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        ขึ้นอยู่กับระบบ:
+                        <ul style="margin-top: 10px;">
+                            <li><strong>DIY:</strong> ไม่มีค่าติดตั้ง (ติดตั้งเอง)</li>
+                            <li><strong>Wireless:</strong> 1,000-3,000 บาท (ปกติรวมในแพคเกจ)</li>
+                            <li><strong>Wired:</strong> 5,000-15,000 บาท (ต้องเดินสายแต่งตั้งที่ซับซ้อน)</li>
+                            <li><strong>Professional Monitoring:</strong> 0-5,000 บาท (ฟรีหรือรวมสัญญา)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>ค่าบริการประจำเดือน 24/7 monitoring ประมาณเท่าไร?</span>
+                        <span class="faq-toggle">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        โดยทั่วไป <strong>500-2,000 บาท/เดือน</strong> ขึ้นอยู่กับ:
+                        <ul style="margin-top: 10px;">
+                            <li>SECOM: ~800-1,200 บาท/เดือน</li>
+                            <li>G4S: ~700-1,000 บาท/เดือน</li>
+                            <li>Chubb: ~750-1,100 บาท/เดือน</li>
+                            <li>Titan Security: ~600-1,000 บาท/เดือน</li>
+                        </ul>
+                        <strong>บัญชี 1-2 ปี:</strong> รับลดราคาได้
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>ระบบ OPTEX ปลอดภัยสำหรับตรวจจับนอกบ้านจริงหรือ?</span>
+                        <span class="faq-toggle">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        ใช่ OPTEX เป็น <strong>แบรนด์เดียวในตลาดไทย</strong> ที่มีเซ็นเซอร์ตรวจจับนอกบ้าน (outdoor perimeter detection) ลดการแจ้งเตือนปลอม (false alarm) ได้ดี เหมาะสำหรับบ้านที่ต้องการป้องกันตั้งแต่แนวรั้ว แต่ราคาแพง (~20,000+ บาท)
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>แนะนำระบบไหนสำหรับบ้านเล็ก <50 ตร.ม. ?</span>
+                        <span class="faq-toggle">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <strong>Smart Home DIY (Aqara, TP-Link, EZVIZ):</strong> ประหยัดที่สุด ~3,500-8,000 บาท ติดตั้งเองได้ ผ่านแอป<br>
+                        <strong>หรือ JL Home/SMART PLUS+:</strong> ถ้าต้องการติดตั้งแบบมืออาชีพ ~10,500-17,900 บาท
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>ระบบ Smart Home DIY เวลาอินเทอร์เน็ตล่ม ยังทำงานไหม?</span>
+                        <span class="faq-toggle">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <strong>ขึ้นอยู่กับระบบ:</strong>
+                        <ul style="margin-top: 10px;">
+                            <li><strong>Xiaomi/Aqara:</strong> เซ็นเซอร์ยังทำงาน hub ต้องมีแบตสำรอง</li>
+                            <li><strong>TP-Link Tapo:</strong> ระบบเซ็นเซอร์บ้างตัวยังทำงานแต่ไม่สามารถสั่งการจากมือถือ</li>
+                            <li>แนะนำ: ถ้าต้องการสำรองดี ระบบ SMART PLUS+ มี 4G SIM backup</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>ติดตั้งระบบเพียงอย่างเดียวได้ไหม หรือต้องติดตั้งกล้อง CCTV ด้วย?</span>
+                        <span class="faq-toggle">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <strong>ติดตั้งเพียงระบบกันขโมยอย่างเดียวได้</strong> ค่อย ๆ เพิ่ม CCTV ทีหลัง ระบบหลาย ๆ ตัว (SECOM, G4S) รองรับแบบ Modular ที่ปรับขยายได้ เมื่ออยากเพิ่มความปลอดภัย
+                    </div>
+                </div>
             </section>
+
+            <div class="divider"></div>
+
+            <!-- MARKET INSIGHTS -->
+            <section id="section-insights">
+                <h2>📈 Market Insights - ข้อมูลตลาด</h2>
+
+                <div class="insight-card">
+                    <div class="insight-title">🚀 Trend 1: การเติบโตของ Smart Home DIY</div>
+                    <div class="insight-text">ผู้บริโภคไทยเริ่มหันมาใช้ระบบ Smart Home DIY มากขึ้น เนื่องจากราคาประหยัด (3,000-8,000 บาท) ติดตั้งง่าย และสามารถควบคุมผ่านแอปมือถือ ส่งผลให้บริษัทเช่น Aqara, TP-Link Tapo, EZVIZ ได้ความนิยมเพิ่มขึ้น</div>
+                </div>
+
+                <div class="insight-card">
+                    <div class="insight-title">💼 Trend 2: Professional Monitoring ยังเป็นอันดับ 1 สำหรับอาคารใหญ่</div>
+                    <div class="insight-text">SECOM, G4S, Chubb ยังคงอาศัยกำลังศรัทธาจากบ้านใหญ่ อาคารพาณิชย์ และโครงการใหญ่ ด้วยบริการ 24/7 monitoring ที่มีเจ้าหน้าที่เข้าตรวจสอบจริง ซึ่งมีค่าใจผู้บริโภค</div>
+                </div>
+
+                <div class="insight-card">
+                    <div class="insight-title">🌍 Trend 3: ระบบไร้สาย (Wireless) กำลังครอบงำตลาด</div>
+                    <div class="insight-text">ระบบไร้สายมีสัดส่วน ~60% ของตลาด เพราะติดตั้งง่าย ไม่ต้องเดินสาย เหมาะกับบ้านที่สร้างเสร็จแล้ว ส่งผลให้ SMART PLUS+, JL Home, Ajax Systems ได้ความนิยม</div>
+                </div>
+
+                <div class="insight-card">
+                    <div class="insight-title">🇯🇵 Trend 4: ผู้ให้บริการต่างประเทศมีสัดส่วนเพิ่มขึ้น</div>
+                    <div class="insight-text">ผู้ให้บริการต่างประเทศ 8 รายได้แก่ OPTEX, Ajax, Hikvision, Dahua, Paradox, Bosch, Honeywell, DSC มีการเข้าตลาดไทยเพิ่มมากขึ้น เพราะคุณภาพและเทคโนโลยีเหนือกว่า แม้ราคาจะสูงกว่า</div>
+                </div>
+
+                <div class="insight-card">
+                    <div class="insight-title">📱 Trend 5: แอปมือถือเป็นปัจจัยสำคัญในการเลือก</div>
+                    <div class="insight-text">ผู้บริโภคหันมาเลือกระบบที่มีแอปมือถือสะดวกและแจ้งเตือนทันที ส่งผลให้ระบบที่มี App ตัวเองมีความนิยมมากกว่าระบบดั้งเดิม</div>
+                </div>
+
+                <div class="insight-card">
+                    <div class="insight-title">🎯 Trend 6: การครอบคลุมภูมิศาสตร์</div>
+                    <div class="insight-text">ผู้ให้บริการชั้นนำ (SECOM, G4S, Titan Security) ครอบคลุมไม่เพียงกรุงเทพเท่านั้น แต่ขยายบริการไปยังต่างจังหวัด เช่น Chiang Mai, Phuket, Koh Samui ด้วย เป็นสัญญาณการเติบโตของตลาดลงไป</div>
+                </div>
+            </section>
+
+            <div class="divider"></div>
+
         </main>
 
         <footer>
-            <p>🏠 เปรียบเทียบระบบกันขโมยบ้าน — ตลาดไทย</p>
-            <p>ข้อมูล ณ วันที่ 4 พฤษภาคม 2569</p>
-            <p>อัปเดตจากการวิจัยแหล่งข้อมูลด้านความปลอดภัยบ้านชั้นนำในไทย</p>
+            <p>🏠 เปรียบเทียบระบบกันขโมยบ้าน — ตลาดไทย 2569</p>
+            <p>ข้อมูล ณ วันที่ 4 พฤษภาคม 2569 | อัปเดตจากการวิจัย 34 ผู้ให้บริการ</p>
+            <p>ความครอบคลุม: Professional Monitoring, Wireless Systems, Wired Systems, Smart Home DIY, International Brands</p>
         </footer>
     </div>
+
+    <script>
+        // Smooth scrolling for TOC links
+        document.querySelectorAll('.toc-list a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href');
+                const targetSection = document.querySelector(targetId);
+                if (targetSection) {
+                    targetSection.scrollIntoView({ behavior: 'smooth' });
+                    updateActiveLink();
+                }
+            });
+        });
+
+        // Update active link based on scroll position
+        function updateActiveLink() {
+            const sections = document.querySelectorAll('section[id]');
+            const tocLinks = document.querySelectorAll('.toc-list a');
+
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (window.pageYOffset >= sectionTop - 100) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            tocLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        // FAQ Toggle Functionality
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', () => {
+                const item = question.parentElement;
+                item.classList.toggle('active');
+            });
+        });
+
+        // Update active link on scroll
+        window.addEventListener('scroll', updateActiveLink);
+
+        // Initial update
+        updateActiveLink();
+    </script>
 </body>
 </html>
