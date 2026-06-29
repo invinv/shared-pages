@@ -86,7 +86,7 @@
       <a class="back" href="fukuoka-brands.html">← กลับ</a>
     </div>
     <div class="legend">
-      <span class="lg"><span class="dot" style="background:#2f5d50"></span>Tenjin / Daimyo</span>
+      <span class="lg"><span class="dot" style="background:#2f5d50"></span>Tenjin / Daimyo / Imaizumi</span>
       <span class="lg"><span class="dot" style="background:#9a5a2a"></span>Hakata Station</span>
       <span class="lg"><span class="dot" style="background:#b23b2e"></span>LaLaport</span>
     </div>
@@ -100,7 +100,7 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
   integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script>
-  var AREA = {Tenjin:'#2f5d50', Daimyo:'#2f5d50', Hakata:'#9a5a2a', LaLaport:'#b23b2e'};
+  var AREA = {Tenjin:'#2f5d50', Daimyo:'#2f5d50', Imaizumi:'#2f5d50', Hakata:'#9a5a2a', LaLaport:'#b23b2e'};
   var shops = [
     {brand:'Salomon', emoji:'🏔️', store:'Salomon Store ONE FUKUOKA BLDG.', area:'Tenjin', floor:'2F',
      addr:'Tenjin 1-11, ONE FUKUOKA BLDG. 2F, Chuo-ku', hours:'จ–ศ 11:00–20:00 · ส–อา 10:00–20:00',
@@ -111,15 +111,27 @@
     {brand:'GU', emoji:'👕', store:'GU 天神店 (Mina Tenjin)', area:'Tenjin', floor:'3F',
      addr:'Tenjin 4-3-8, ชั้น 3, Chuo-ku', hours:'ตามเวลาห้าง Mina Tenjin',
      note:'~2,150 ตร.ม. full-line (เปิด เม.ย. 2023)', lat:33.5931542, lng:130.3984736},
-    {brand:'Birkenstock', emoji:'🦶', store:'Birkenstock — Tenjin Chikagai', area:'Tenjin', floor:'B1 · East 8',
-     addr:'Tenjin Underground East 8 (Tenjin 2-chome)', hours:'10:00–20:00',
-     note:'ในทางเดินใต้ดิน Tenjin', lat:33.5888147, lng:130.4002054},
-    {brand:'Birkenstock', emoji:'🦶', store:'ARTWORK/FACTORY — Daimyo', area:'Daimyo', floor:'',
-     addr:'Saimon Bldg, 1-1-46 Daimyo, Chuo-ku', hours:'11:00–20:00',
-     note:'สาขาย่าน Daimyo (เดิน 5–10 นาทีจาก Tenjin)', lat:33.5866494, lng:130.3972087},
-    {brand:'Birkenstock', emoji:'🦶', store:'Birkenstock — Hakata Hankyu / AMU Plaza (JR Hakata City)', area:'Hakata', floor:'6F',
-     addr:'1-1 Hakata-eki Chuo-gai, ชั้น 6, JR Hakata City (Hakata Hankyu / アミュプラザ博多), Hakata-ku', hours:'10:00–20:00 · ☎ 092-710-4747',
-     note:'ในตึกสถานี Hakata — ร้านเดียวที่ Google ขึ้นในตึกนี้ (Hakata Hankyu = AMU Plaza อาคารเดียวกัน)', lat:33.58981, lng:130.4204315},
+    {brand:'Birkenstock', emoji:'🦶', store:'Birkenstock 天神地下街 (直営)', area:'Tenjin', floor:'B1 · East 8 #085',
+     addr:'Tenjin Underground East 8 #085 (Tenjin 2-chome)', hours:'10:00–20:00 · ☎ 092-406-3666',
+     note:'ร้านตรง (直営) ในทางเดินใต้ดิน Tenjin', lat:33.5888147, lng:130.4002054},
+    {brand:'Birkenstock', emoji:'🦶', store:'FACTORY by BIRKENSTOCK (ผู้ชาย · concept)', area:'Imaizumi', floor:'',
+     addr:'今泉 2-5-4, Chuo-ku (ย่าน Imaizumi/Daimyo)', hours:'11:00–20:00 · ☎ 092-714-7757',
+     note:'ARTWORK concept store สายผู้ชาย — เดิน 5–10 นาทีจาก Tenjin', lat:33.5857148, lng:130.3967615},
+    {brand:'Birkenstock', emoji:'🦶', store:'ARTWORK FUKUOKA (ผู้หญิง · concept)', area:'Imaizumi', floor:'1F',
+     addr:'今泉 2-5-11 カンファービル 1F, Chuo-ku', hours:'11:00–20:00 · ☎ 092-753-8755',
+     note:'ARTWORK concept store สายผู้หญิง', lat:33.5854116, lng:130.3963954},
+    {brand:'Birkenstock', emoji:'🦶', store:'Uptown Deluxe 福岡 (select shop)', area:'Daimyo', floor:'',
+     addr:'大名 1-2-2, Chuo-ku', hours:'select shop — มี Birkenstock บางรุ่น',
+     note:'เซเลกต์ชอปย่าน Daimyo', lat:33.58579, lng:130.393773},
+    {brand:'Birkenstock', emoji:'🦶', store:"HARRYS ハリーズ (select shop)", area:'Imaizumi', floor:'',
+     addr:'今泉 2-5-29, Chuo-ku', hours:'select shop — มี Birkenstock บางรุ่น',
+     note:'เซเลกต์ชอปย่าน Imaizumi', lat:33.5858115, lng:130.3970395},
+    {brand:'Birkenstock', emoji:'🦶', store:'Birkenstock JR博多シティ / AMU Plaza (直営)', area:'Hakata', floor:'AMU 6F',
+     addr:'1-1 Hakata-eki Chuo-gai, AMU Plaza ชั้น 6, Hakata-ku', hours:'10:00–20:00 · ☎ 092-710-4747',
+     note:'ร้านตรง (直営) ฝั่ง AMU Plaza ในตึกสถานี Hakata', lat:33.58981, lng:130.4204315},
+    {brand:'Birkenstock', emoji:'🦶', store:'Birkenstock 博多阪急店 (concession)', area:'Hakata', floor:'Hakata Hankyu',
+     addr:'1-1 Hakata-eki Chuo-gai, Hakata Hankyu, Hakata-ku', hours:'ตามเวลา Hakata Hankyu',
+     note:'เคาน์เตอร์ในห้าง Hakata Hankyu (คนละจุดกับ AMU)', lat:33.58905, lng:130.41885},
     {brand:'On', emoji:'👟', store:'ムラサキスポーツ — Fukuoka PARCO', area:'Tenjin', floor:'6F',
      addr:'Tenjin 2-11-1, Fukuoka Parco ชั้น 6, Chuo-ku', hours:'ตามเวลา PARCO',
      note:'Stockist (ไม่ใช่ brand store) ที่สะดวกสุด', lat:33.590874, lng:130.39855},
