@@ -110,7 +110,7 @@
 <aside class="sidebar" id="sidebar">
   <div class="sbhead">
     <div class="top">
-      <div class="ttl">🗺️ ร้านแบรนด์ — ฟุกุโอกะ<small>16 ร้าน · แตะการ์ด/หมุดเพื่อนำทาง</small></div>
+      <div class="ttl">🗺️ ร้านแบรนด์ — ฟุกุโอกะ<small>25 ร้าน · แตะการ์ด/หมุดเพื่อนำทาง</small></div>
       <div class="hbtns">
         <a class="iconbtn" href="fukuoka-brands.html" title="กลับ">←</a>
         <button class="iconbtn" id="hideBtn" type="button" title="ซ่อนรายการ — ดูแผนที่เต็มจอ">✕</button>
@@ -119,18 +119,19 @@
     <div class="legend">
       <span class="lg"><span class="dot" style="background:#2f5d50"></span>Tenjin / Daimyo / Imaizumi</span>
       <span class="lg"><span class="dot" style="background:#9a5a2a"></span>Hakata Station</span>
+      <span class="lg"><span class="dot" style="background:#2f6d8f"></span>Canal City</span>
       <span class="lg"><span class="dot" style="background:#b23b2e"></span>LaLaport</span>
     </div>
     <button id="locateBtn" class="locate" type="button">📍 หาตำแหน่งฉัน — เรียงร้านใกล้สุด</button>
   </div>
   <div class="list" id="list"></div>
 </aside>
-<button class="fab" id="openBtn" type="button">📋 รายการร้าน (16)</button>
+<button class="fab" id="openBtn" type="button">📋 รายการร้าน (25)</button>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
   integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script>
-  var AREA = {Tenjin:'#2f5d50', Daimyo:'#2f5d50', Imaizumi:'#2f5d50', Hakata:'#9a5a2a', LaLaport:'#b23b2e'};
+  var AREA = {Tenjin:'#2f5d50', Daimyo:'#2f5d50', Imaizumi:'#2f5d50', Hakata:'#9a5a2a', 'Canal City':'#2f6d8f', LaLaport:'#b23b2e'};
   var shops = [
     {brand:'Salomon', emoji:'🏔️', store:'Salomon Store ONE FUKUOKA BLDG.', area:'Tenjin', floor:'2F',
      addr:'Tenjin 1-11, ONE FUKUOKA BLDG. 2F, Chuo-ku', hours:'จ–ศ 11:00–20:00 · ส–อา 10:00–20:00',
@@ -179,7 +180,34 @@
      note:'เดนิมพรีเมียมญี่ปุ่น (Kojima, Okayama) — สาขาเดียวในคิวชู · ★4.9', lat:33.5853201, lng:130.3922779},
     {brand:'ZARA', emoji:'🛍️', store:'ZARA 福岡天神西通り店', area:'Daimyo', floor:'',
      addr:'大名 1-12-64, Chuo-ku (ถนน Tenjin-Nishidori / นิชิโดริ)', hours:'ตามเวลาร้าน (~11:00–21:00)',
-     note:'fast fashion สเปน — สาขาถนนนิชิโดริ ใจกลาง Tenjin/Daimyo', lat:33.5883134, lng:130.3964807}
+     note:'fast fashion สเปน — สาขาถนนนิชิโดริ ใจกลาง Tenjin/Daimyo', lat:33.5883134, lng:130.3964807},
+    {brand:'Onitsuka Tiger', emoji:'👟', store:'Canal City — North 2F', area:'Canal City', floor:'North 2F',
+     addr:'Canal City Hakata, 1-2-1 Sumiyoshi, Hakata-ku', hours:'10:00–21:00',
+     note:'สนีกเกอร์เรโทรจากโกเบ ลาย Mexico 66 — หาง่ายกว่าในไทย', lat:33.5896305, lng:130.4109478},
+    {brand:'adidas Originals', emoji:'👟', store:'Canal City OPA 1F', area:'Canal City', floor:'OPA 1F',
+     addr:'Canal City Hakata, 1-2-22 Sumiyoshi, Hakata-ku', hours:'10:00–21:00',
+     note:'ร้าน adidas Originals แห่งเดียวในฟุกุโอกะ', lat:33.5893186, lng:130.4110989},
+    {brand:'DENHAM', emoji:'👖', store:'Canal City — Center Walk South 1F', area:'Canal City', floor:'Center Walk S 1F',
+     addr:'Canal City Hakata, 1-2-22 Sumiyoshi, Hakata-ku', hours:'10:00–21:00',
+     note:'ยีนส์ raw จากอัมสเตอร์ดัม มีจุดล้างยีนส์แห่งแรกของคิวชู · ★4.8', lat:33.5897805, lng:130.4108478},
+    {brand:"Levi's Store", emoji:'👖', store:'Canal City OPA 2F', area:'Canal City', floor:'OPA 2F',
+     addr:'Canal City Hakata, 1-2-22 Sumiyoshi, Hakata-ku', hours:'10:00–21:00',
+     note:'วิหารยีนส์ 501 + selvedge เต็มผนัง', lat:33.589688, lng:130.4111924},
+    {brand:'THE NORTH FACE+', emoji:'🧥', store:'Canal City OPA 3F', area:'Canal City', floor:'OPA 3F',
+     addr:'Canal City Hakata, 1-2-22 Sumiyoshi, Hakata-ku', hours:'10:00–21:00',
+     note:'แฟลกชิปไลฟ์สไตล์ รวม North Face / Helly Hansen / Allbirds', lat:33.58954, lng:130.41117},
+    {brand:'BEAMS', emoji:'🛍️', store:'AMU Plaza Hakata 3F', area:'Hakata', floor:'AMU 3F',
+     addr:'1-1 Hakata-eki Chuo-gai (JR Hakata City), Hakata-ku', hours:'10:00–20:00',
+     note:'select shop เทรนด์เซตเตอร์จากโตเกียว ติดสถานีฮากาตะ', lat:33.59053, lng:130.4210556},
+    {brand:'UA green label relaxing', emoji:'🧣', store:'AMU Plaza Hakata 6F', area:'Hakata', floor:'AMU 6F',
+     addr:'1-1 Hakata-eki Chuo-gai (JR Hakata City), Hakata-ku', hours:'10:00–20:00',
+     note:'United Arrows สาย relaxed-luxe เพิ่งรีโนเวต', lat:33.5899017, lng:130.4197255},
+    {brand:"Freak's Store", emoji:'🤠', store:'AMU Plaza Hakata 4F', area:'Hakata', floor:'AMU 4F',
+     addr:'1-1 Hakata-eki Chuo-gai (JR Hakata City), Hakata-ku', hours:'10:00–20:00',
+     note:'select shop อเมริกันแคชชวล + เดนิมวินเทจ', lat:33.5897, lng:130.42065},
+    {brand:'Fred Perry', emoji:'🎽', store:'AMU Plaza Hakata 5F', area:'Hakata', floor:'AMU 5F',
+     addr:'1-1 Hakata-eki Chuo-gai (JR Hakata City), Hakata-ku', hours:'10:00–20:00',
+     note:'โปโลพวงหรีดสไตล์มอด มีเคาน์เตอร์ปลอดภาษี', lat:33.58995, lng:130.42025}
   ];
 
   function navUrl(s){ return 'https://www.google.com/maps/search/?api=1&query=' + s.lat + ',' + s.lng; }
