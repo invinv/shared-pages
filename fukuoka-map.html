@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>แผนที่ร้าน — ฟุกุโอกะ 6 แบรนด์</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+<style>
+  :root{
+    --ink:#1c1b19; --muted:#6b6760; --line:#e6e1d8; --bg:#f6f3ec;
+    --card:#fffdf8; --accent:#b23b2e; --tenjin:#2f5d50; --hakata:#9a5a2a; --lala:#b23b2e;
+  }
+  *{box-sizing:border-box; margin:0; padding:0}
+  html,body{height:100%}
+  body{
+    font-family:"Hiragino Sans","Noto Sans Thai","Segoe UI",system-ui,sans-serif;
+    background:var(--bg); color:var(--ink); -webkit-font-smoothing:antialiased;
+    overflow:hidden;
+  }
+  .app{display:flex; flex-direction:column; height:100dvh}
+  header{
+    padding:12px 16px calc(12px + env(safe-area-inset-top)); padding-top:max(12px,env(safe-area-inset-top));
+    background:var(--card); border-bottom:1px solid var(--line); flex:0 0 auto; z-index:1200;
+  }
+  .top{display:flex; align-items:center; gap:10px; justify-content:space-between}
+  .ttl{font-size:17px; font-weight:800; letter-spacing:-.01em}
+  .ttl small{display:block; font-size:11.5px; font-weight:600; color:var(--muted); letter-spacing:.02em; margin-top:1px}
+  .back{font-size:13px; font-weight:700; color:var(--accent); text-decoration:none; white-space:nowrap; padding:7px 10px; border:1px solid var(--line); border-radius:9px}
+  .back:active{background:#f1ece1}
+  .legend{display:flex; gap:7px; flex-wrap:wrap; margin-top:10px}
+  .lg{display:inline-flex; align-items:center; gap:5px; font-size:11.5px; font-weight:700; padding:3px 9px; border-radius:999px; background:#efe9dd; color:var(--muted)}
+  .dot{width:9px; height:9px; border-radius:50%}
+  .content{flex:1 1 auto; display:flex; min-height:0}
+  #map{flex:1 1 auto; min-height:0; background:#dfe6e2; z-index:1}
+  .list{
+    flex:0 0 360px; max-width:360px; overflow-y:auto; -webkit-overflow-scrolling:touch;
+    background:var(--bg); border-left:1px solid var(--line); padding:12px;
+  }
+  .shop{
+    background:var(--card); border:1px solid var(--line); border-left:4px solid var(--tenjin);
+    border-radius:12px; padding:13px 14px; margin-bottom:10px; cursor:pointer;
+    transition:transform .1s ease, box-shadow .1s ease;
+  }
+  .shop:active{transform:scale(.99)}
+  .shop.sel{box-shadow:0 6px 18px rgba(40,30,15,.12); border-color:#d8cfbe}
+  .shop .r1{display:flex; align-items:center; gap:8px; justify-content:space-between}
+  .shop .brand{font-size:16px; font-weight:800; letter-spacing:-.01em; display:flex; align-items:center; gap:7px}
+  .shop .area{font-size:10.5px; font-weight:800; padding:2px 8px; border-radius:999px; color:#fff; white-space:nowrap}
+  .shop .store{font-size:13px; color:var(--accent); font-weight:600; margin:5px 0 3px}
+  .shop .addr{font-size:12.5px; color:var(--muted); line-height:1.5}
+  .shop .meta{font-size:12px; color:var(--ink); margin-top:7px; display:flex; flex-wrap:wrap; gap:6px}
+  .chip{font-size:11px; font-weight:700; padding:2px 8px; border-radius:6px; background:#efe9dd; color:var(--muted)}
+  .nav{
+    display:inline-flex; align-items:center; gap:5px; margin-top:10px; font-size:12.5px; font-weight:700;
+    color:#fff; background:var(--tenjin); text-decoration:none; padding:8px 12px; border-radius:9px;
+  }
+  .nav:active{filter:brightness(.93)}
+  /* Leaflet popup */
+  .leaflet-popup-content-wrapper{border-radius:12px}
+  .leaflet-popup-content{margin:12px 14px; font-family:inherit}
+  .pop .b{font-size:15px; font-weight:800}
+  .pop .s{font-size:12.5px; color:var(--accent); font-weight:600; margin:2px 0 4px}
+  .pop .a{font-size:12px; color:var(--muted); line-height:1.5}
+  .pop .nav{margin-top:9px}
+  .pin{
+    display:flex; align-items:center; justify-content:center; width:30px; height:30px;
+    border-radius:50% 50% 50% 0; transform:rotate(-45deg); border:2px solid #fff;
+    box-shadow:0 2px 6px rgba(0,0,0,.3); font-size:15px;
+  }
+  .pin span{transform:rotate(45deg)}
+  /* MOBILE */
+  @media (max-width:780px){
+    .content{flex-direction:column}
+    #map{flex:0 0 54dvh; height:54dvh}
+    .list{flex:1 1 auto; max-width:none; border-left:none; border-top:1px solid var(--line)}
+    .ttl{font-size:15px}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="top">
+      <div class="ttl">🗺️ แผนที่ร้าน — ฟุกุโอกะ<small>6 แบรนด์ · แตะหมุด/การ์ดเพื่อดูที่ตั้ง + นำทาง</small></div>
+      <a class="back" href="fukuoka-brands.html">← กลับ</a>
+    </div>
+    <div class="legend">
+      <span class="lg"><span class="dot" style="background:#2f5d50"></span>Tenjin / Daimyo</span>
+      <span class="lg"><span class="dot" style="background:#9a5a2a"></span>Hakata Station</span>
+      <span class="lg"><span class="dot" style="background:#b23b2e"></span>LaLaport</span>
+    </div>
+  </header>
+  <div class="content">
+    <div id="map"></div>
+    <div class="list" id="list"></div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script>
+  var AREA = {Tenjin:'#2f5d50', Daimyo:'#2f5d50', Hakata:'#9a5a2a', LaLaport:'#b23b2e'};
+  var shops = [
+    {brand:'Salomon', emoji:'🏔️', store:'Salomon Store ONE FUKUOKA BLDG.', area:'Tenjin', floor:'2F',
+     addr:'Tenjin 1-11, ONE FUKUOKA BLDG. 2F, Chuo-ku', hours:'จ–ศ 11:00–20:00 · ส–อา 10:00–20:00',
+     note:'Brand store เดียวในคิวชู (เปิด เม.ย. 2025)', lat:33.5910081, lng:130.3997905},
+    {brand:'Uniqlo', emoji:'🧥', store:'Uniqlo Mina Tenjin', area:'Tenjin', floor:'1–2F',
+     addr:'Mina Tenjin ชั้น 1–2 (เดิน 3 นาทีจากสถานี Tenjin)', hours:'ตามเวลาห้าง Mina Tenjin',
+     note:'แฟล็กชิป · มีบริการปัก Hakata-ori', lat:33.5929742, lng:130.3983736},
+    {brand:'GU', emoji:'👕', store:'GU 天神店 (Mina Tenjin)', area:'Tenjin', floor:'3F',
+     addr:'Tenjin 4-3-8, ชั้น 3, Chuo-ku', hours:'ตามเวลาห้าง Mina Tenjin',
+     note:'~2,150 ตร.ม. full-line (เปิด เม.ย. 2023)', lat:33.5931542, lng:130.3984736},
+    {brand:'Birkenstock', emoji:'🦶', store:'Birkenstock — Tenjin Chikagai', area:'Tenjin', floor:'B1 · East 8',
+     addr:'Tenjin Underground East 8 (Tenjin 2-chome)', hours:'10:00–20:00',
+     note:'ในทางเดินใต้ดิน Tenjin', lat:33.5888147, lng:130.4002054},
+    {brand:'Birkenstock', emoji:'🦶', store:'ARTWORK/FACTORY — Daimyo', area:'Daimyo', floor:'',
+     addr:'Saimon Bldg, 1-1-46 Daimyo, Chuo-ku', hours:'11:00–20:00',
+     note:'สาขาย่าน Daimyo (เดิน 5–10 นาทีจาก Tenjin)', lat:33.5866494, lng:130.3972087},
+    {brand:'On', emoji:'👟', store:'ムラサキスポーツ — Fukuoka PARCO', area:'Tenjin', floor:'6F',
+     addr:'Tenjin 2-11-1, Fukuoka Parco ชั้น 6, Chuo-ku', hours:'ตามเวลา PARCO',
+     note:'Stockist (ไม่ใช่ brand store) ที่สะดวกสุด', lat:33.590874, lng:130.39855},
+    {brand:'On', emoji:'👟', store:'Emmi — Hakata Hankyu', area:'Hakata', floor:'4F',
+     addr:'Hakata-eki Chuo-gai 1-1, Hakata Hankyu ชั้น 4, Hakata-ku', hours:'ตามเวลา Hakata Hankyu',
+     note:'Stockist ดีฝั่ง Hakata Station', lat:33.5892521, lng:130.4190278},
+    {brand:'Ralph Lauren', emoji:'🐴', store:'Polo Ralph Lauren — LaLaport Fukuoka', area:'LaLaport', floor:'2F',
+     addr:'6-23-1 Naka, Hakata-ku (Mitsui Shopping Park LaLaport) ชั้น 2', hours:'10:00–21:00 · โทร 092-586-6860',
+     note:'ไกล Tenjin ~15–20 นาทีโดยรถ', lat:33.565704, lng:130.4400938}
+  ];
+
+  function navUrl(s){ return 'https://www.google.com/maps/search/?api=1&query=' + s.lat + ',' + s.lng; }
+  function esc(t){ return String(t).replace(/[&<>"]/g, function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+
+  // ---- Build the shop list first (works even if the map library fails to load) ----
+  var list = document.getElementById('list');
+  shops.forEach(function(s, i){
+    var color = AREA[s.area] || '#2f5d50';
+    var el = document.createElement('div');
+    el.className = 'shop'; el.style.borderLeftColor = color; el.id = 'shop'+i;
+    el.innerHTML =
+      '<div class="r1"><div class="brand">'+s.emoji+' '+esc(s.brand)+'</div>'+
+      '<div class="area" style="background:'+color+'">'+esc(s.area)+'</div></div>'+
+      '<div class="store">'+esc(s.store)+(s.floor?(' · '+esc(s.floor)):'')+'</div>'+
+      '<div class="addr">'+esc(s.addr)+'</div>'+
+      '<div class="meta"><span class="chip">🕙 '+esc(s.hours)+'</span></div>'+
+      '<div>'+(s.note?('<div class="addr" style="margin-top:6px">'+esc(s.note)+'</div>'):'')+'</div>'+
+      '<a class="nav" style="background:'+color+'" target="_blank" rel="noopener" href="'+navUrl(s)+'" onclick="event.stopPropagation()">🧭 นำทางด้วย Google Maps</a>';
+    el.addEventListener('click', function(){ select(i, true); });
+    list.appendChild(el);
+  });
+
+  // ---- Map (guarded: if Leaflet/tiles are unavailable, the list above still works) ----
+  var map = null, markers = [];
+  if (typeof L !== 'undefined') {
+    try {
+      map = L.map('map', {zoomControl:true, scrollWheelZoom:true});
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom:19, attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+      }).addTo(map);
+      var bounds = [];
+      shops.forEach(function(s, i){
+        var color = AREA[s.area] || '#2f5d50';
+        var icon = L.divIcon({
+          className:'', iconSize:[30,30], iconAnchor:[15,30], popupAnchor:[0,-28],
+          html:'<div class="pin" style="background:'+color+'"><span>'+s.emoji+'</span></div>'
+        });
+        var m = L.marker([s.lat, s.lng], {icon:icon}).addTo(map);
+        m.bindPopup(
+          '<div class="pop"><div class="b">'+esc(s.brand)+' '+s.emoji+'</div>'+
+          '<div class="s">'+esc(s.store)+(s.floor?(' · '+esc(s.floor)):'')+'</div>'+
+          '<div class="a">'+esc(s.addr)+'<br>🕙 '+esc(s.hours)+'</div>'+
+          '<a class="nav" style="background:'+color+'" target="_blank" rel="noopener" href="'+navUrl(s)+'">🧭 นำทาง</a></div>');
+        m.on('click', function(){ select(i, false); });
+        markers.push(m); bounds.push([s.lat, s.lng]);
+      });
+      map.fitBounds(bounds, {padding:[50,50]});
+    } catch(e){ map = null; }
+  }
+  if (!map) {
+    // No map: reclaim the space so the list gets the full screen
+    var mapEl = document.getElementById('map');
+    if (mapEl) mapEl.style.display = 'none';
+  }
+
+  var selEl = null;
+  function select(i, fromList){
+    var s = shops[i];
+    if (map && markers[i]) {
+      map.flyTo([s.lat, s.lng], Math.max(map.getZoom(), 16), {duration:.5});
+      markers[i].openPopup();
+    }
+    if(selEl) selEl.classList.remove('sel');
+    selEl = document.getElementById('shop'+i);
+    if(selEl){
+      selEl.classList.add('sel');
+      if(fromList !== true) selEl.scrollIntoView({behavior:'smooth', block:'nearest'});
+    }
+  }
+</script>
+</body>
+</html>
