@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>ราเมงเด็ด — ฟุกุโอกะ (นอกจาก Ichiran)</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+<style>
+  :root{
+    --ink:#1c1b19; --muted:#6b6760; --line:#e6e1d8; --bg:#f6f3ec;
+    --card:#fffdf8; --accent:#b23b2e;
+  }
+  *{box-sizing:border-box; margin:0; padding:0}
+  html,body{height:100%}
+  body{
+    font-family:"Hiragino Sans","Noto Sans Thai","Segoe UI",system-ui,sans-serif;
+    background:var(--bg); color:var(--ink); -webkit-font-smoothing:antialiased; overflow:hidden;
+  }
+  .app{display:flex; flex-direction:column; height:100dvh}
+  header{
+    padding:12px 16px; padding-top:max(12px,env(safe-area-inset-top));
+    background:var(--card); border-bottom:1px solid var(--line); flex:0 0 auto; z-index:1200;
+  }
+  .top{display:flex; align-items:center; gap:10px; justify-content:space-between}
+  .ttl{font-size:17px; font-weight:800; letter-spacing:-.01em}
+  .ttl small{display:block; font-size:11.5px; font-weight:600; color:var(--muted); letter-spacing:.02em; margin-top:1px}
+  .back{font-size:13px; font-weight:700; color:var(--accent); text-decoration:none; white-space:nowrap; padding:7px 10px; border:1px solid var(--line); border-radius:9px}
+  .back:active{background:#f1ece1}
+  .legend{display:flex; gap:7px; flex-wrap:wrap; margin-top:10px}
+  .lg{display:inline-flex; align-items:center; gap:5px; font-size:11.5px; font-weight:700; padding:3px 9px; border-radius:999px; background:#efe9dd; color:var(--muted)}
+  .dot{width:9px; height:9px; border-radius:50%}
+  .content{flex:1 1 auto; display:flex; min-height:0}
+  #map{flex:1 1 auto; min-height:0; background:#dfe6e2; z-index:1}
+  .list{
+    flex:0 0 380px; max-width:380px; overflow-y:auto; -webkit-overflow-scrolling:touch;
+    background:var(--bg); border-left:1px solid var(--line); padding:12px;
+  }
+  .shop{
+    background:var(--card); border:1px solid var(--line); border-left:4px solid var(--accent);
+    border-radius:12px; padding:13px 14px; margin-bottom:10px; cursor:pointer;
+    transition:transform .1s ease, box-shadow .1s ease;
+  }
+  .shop:active{transform:scale(.99)}
+  .shop.sel{box-shadow:0 6px 18px rgba(40,30,15,.12); border-color:#d8cfbe}
+  .shop .r1{display:flex; align-items:flex-start; gap:8px; justify-content:space-between}
+  .shop .name{font-size:16px; font-weight:800; letter-spacing:-.01em; display:flex; align-items:center; gap:7px}
+  .shop .cat{font-size:10px; font-weight:800; padding:2px 8px; border-radius:999px; color:#fff; white-space:nowrap; flex:0 0 auto}
+  .shop .jp{font-size:12px; color:var(--muted); margin-top:1px}
+  .shop .style{font-size:12.5px; color:var(--accent); font-weight:700; margin:6px 0 4px}
+  .shop .why{font-size:13px; color:var(--ink); line-height:1.55}
+  .shop .meta{font-size:11.5px; color:var(--muted); margin-top:8px; display:flex; flex-wrap:wrap; gap:6px}
+  .chip{font-weight:700; padding:2px 8px; border-radius:6px; background:#efe9dd; color:var(--muted); white-space:nowrap}
+  .chip.star{background:#fbeede; color:#a8650a}
+  .sig{font-size:12px; color:var(--ink); margin-top:7px; padding-top:7px; border-top:1px dashed var(--line)}
+  .sig b{color:var(--accent)}
+  .nav{
+    display:inline-flex; align-items:center; gap:5px; margin-top:10px; font-size:12.5px; font-weight:700;
+    color:#fff; background:var(--accent); text-decoration:none; padding:8px 12px; border-radius:9px;
+  }
+  .nav:active{filter:brightness(.93)}
+  .leaflet-popup-content-wrapper{border-radius:12px}
+  .leaflet-popup-content{margin:12px 14px; font-family:inherit; min-width:180px}
+  .pop .b{font-size:15px; font-weight:800}
+  .pop .s{font-size:12px; color:var(--accent); font-weight:700; margin:2px 0 4px}
+  .pop .a{font-size:12px; color:var(--muted); line-height:1.5}
+  .pop .nav{margin-top:9px}
+  .pin{
+    display:flex; align-items:center; justify-content:center; width:30px; height:30px;
+    border-radius:50% 50% 50% 0; transform:rotate(-45deg); border:2px solid #fff;
+    box-shadow:0 2px 6px rgba(0,0,0,.3); font-size:15px;
+  }
+  .pin span{transform:rotate(45deg)}
+  @media (max-width:780px){
+    .content{flex-direction:column}
+    #map{flex:0 0 52dvh; height:52dvh}
+    .list{flex:1 1 auto; max-width:none; border-left:none; border-top:1px solid var(--line)}
+    .ttl{font-size:15px}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="top">
+      <div class="ttl">🍜 ราเมงเด็ด ฟุกุโอกะ<small>12 ร้านคัดมา (นอกจาก Ichiran) · แตะหมุด/การ์ดเพื่อนำทาง</small></div>
+      <a class="back" href="index.html">← หน้าแรก</a>
+    </div>
+    <div class="legend">
+      <span class="lg"><span class="dot" style="background:#b23b2e"></span>ทงคตสึเข้มข้น/ฟอง</span>
+      <span class="lg"><span class="dot" style="background:#2f5d50"></span>ทงคตสึใส/สมดุล</span>
+      <span class="lg"><span class="dot" style="background:#a8842c"></span>นางาฮามะ</span>
+      <span class="lg"><span class="dot" style="background:#5a4f82"></span>สึเกะเมง/ไม่ใช่ทงคตสึ</span>
+    </div>
+  </header>
+  <div class="content">
+    <div id="map"></div>
+    <div class="list" id="list"></div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script>
+  var CAT = {
+    rich:{c:'#b23b2e', t:'เข้มข้น'},
+    clean:{c:'#2f5d50', t:'ใส/สมดุล'},
+    nagahama:{c:'#a8842c', t:'นางาฮามะ'},
+    other:{c:'#5a4f82', t:'อื่น ๆ'}
+  };
+  var shops = [
+    {name:'Hakata Issou (本店)', jp:'博多一双 本店', area:'Hakata · หลังสถานี', cat:'rich', emoji:'☕',
+     style:'ทงคตสึเข้มข้น ฟองนุ่ม (cappuccino)', sig:'ทงคตสึโปะฟองหมูปั่นนุ่มเหมือนคาปูชิโน', price:'~650–680¥ (เติมเส้น +100)', hours:'ทุกวัน 11:00–24:00', rating:'4.0 ★ (6,976)',
+     why:'ฟองหมูฟูนุ่มเหมือนคาปูชิโน เข้มข้นแต่ดื่มลื่น ต้นตำรับที่คนต่อคิวยาวไม่เคยขาด เดิน 4 นาทีจากสถานี', lat:33.586378, lng:130.4250999},
+    {name:'Hakata Ikkousha (総本店)', jp:'博多一幸舎 総本店', area:'Hakata · Hakata-ekimae', cat:'rich', emoji:'🍜',
+     style:'ทงคตสึ awa-daki ซุปมีฟองครีม', sig:'ซุปกระดูกหมูเข้มลึกโปะฟองครีมบาง ๆ', price:'~800–1,000¥', hours:'จ–ส 11:00–22:30 · อา ถึง 21:00', rating:'4.1 ★ (3,936)',
+     why:'ร้านธงของแบรนด์ Ikkousha ระดับโลก ซุปหมูเข้มลึกมีฟองครีมบาง ๆ เดินจากสถานีได้สบาย', lat:33.5882183, lng:130.4170536},
+    {name:'Shin-Shin (天神本店)', jp:'博多らーめん ShinShin', area:'Tenjin', cat:'clean', emoji:'⭐',
+     style:'ทงคตสึใส สมดุล (ผสมไก่)', sig:'ทงคตสึผสมไก่อาริตะ ซุปนุ่มใส เส้นบางโปะชาชู', price:'~760–820¥', hours:'11:00–03:00 (ปิดพุธ & อังคารที่ 3)', rating:'4.3 ★ (7,686)',
+     why:'แลนด์มาร์กเทนจินที่ดาราชอบ ซุปทงคตสึผสมไก่นุ่มใส ดื่มง่ายไม่หนัก ใจกลางย่านช้อปปิ้ง', lat:33.5927497, lng:130.3968446},
+    {name:'Ippudo (大名本店)', jp:'一風堂 大名本店', area:'Daimyo', cat:'clean', emoji:'🔴',
+     style:'ทงคตสึสมัยใหม่ ละเอียดประณีต', sig:'Shiromaru (ทงคตสึครีม) · Akamaru (มิโสะเผ็ด+น้ำมันกระเทียม)', price:'Shiromaru ~720¥ / Akamaru ~820¥', hours:'จ–พฤ 11:00–23:00 · ศ–ส ถึง 24:00', rating:'4.2 ★ (2,084)',
+     why:'ร้านต้นกำเนิด Ippudo ปี 1985 ทงคตสึเนียนนุ่มสไตล์โมเดิร์น ลอง Akamaru มิโสะเผ็ดในย่านไดเมียว', lat:33.587801, lng:130.395866},
+    {name:'Ganso Akanoren Setchan', jp:'元祖赤のれん 節ちゃんラーメン', area:'Daimyo / Tenjin', cat:'clean', emoji:'🏮',
+     style:'ทงคตสึคลาสสิกแบบเก่า ใสติดซีอิ๊ว', sig:'ทงคตสึดั้งเดิม เส้นบาง ชาชู เมมมะ ต้นหอม', price:'~500–780¥', hours:'พ–จ 11:00–20:30 (ปิดอังคาร)', rating:'4.1 ★ (2,737)',
+     why:'ตำนานเก่าแก่ปี 1946 ต้นกำเนิดทงคตสึฮากาตะ ซุปขาวนวลติดซีอิ๊ว ราคาย่อมเยา ของแท้รสดั้งเดิม', lat:33.5916163, lng:130.399409},
+    {name:'Nagahama Number One (祇園)', jp:'長浜ナンバーワン 祇園店', area:'Gion', cat:'nagahama', emoji:'🥢',
+     style:'นางาฮามะ (ทงคตสึเบา เส้นบางพิเศษ)', sig:'นางาฮามะราเมง ซุปเบา เส้นตรงบางมาก เติมเส้นได้', price:'~550–1,000¥', hours:'จ–ส 11:30–23:00 · อา ถึง 22:00', rating:'4.1 ★ (1,771)',
+     why:'ตำนานนางาฮามะตั้งแต่ปี 1971 ซุปเบาเส้นบางเฉียบ ราคาเริ่ม 550¥ ใกล้สถานีกิอง', lat:33.5931615, lng:130.4130388},
+    {name:'Ganso Ramen Nagahamake', jp:'元祖ラーメン長浜家', area:'Nagahama · Otemon', cat:'nagahama', emoji:'🌙',
+     style:'นางาฮามะ (ใส เส้นบาง ทงคตสึเบา)', sig:'นางาฮามะทงคตสึ เส้นตรงบาง ซุปเบา วัฒนธรรมเติมเส้น', price:'~500¥', hours:'เปิด 24 ชม. (ปิดล้างร้านจันทร์เช้า)', rating:'4.1 ★ (4,421)',
+     why:'ตำนานเปิด 24 ชม. ซุปเบาไม่ปรุงแต่ง 500¥ คนท้องถิ่นแท้ ๆ รัก เหมาะดึก ๆ หิว ๆ', lat:33.5917459, lng:130.3852945},
+    {name:'Hacchan Ramen', jp:'八ちゃんラーメン', area:'Shirogane / Yakuin', cat:'rich', emoji:'🌃',
+     style:'ทงคตสึเข้มข้นสุด ฟองนุ่ม', sig:'ทงคตสึเส้นบาง · เนกิโมริ (ต้นหอมเยอะ) ยอดนิยม', price:'~700–750¥ (เนกิโมริ ~900)', hours:'จ–ส 18:00–02:00 (ปิดอาทิตย์)', rating:'4.1 ★ (1,694)',
+     why:'ทงคตสึเข้มจัดข้นเหนียวจนคนท้องถิ่นยกเป็นบอลของผู้รู้ คู่สามีภรรยาทำมาตั้งแต่ 1968 เปิดดึก', lat:33.5815722, lng:130.4036762},
+    {name:'Hakata Daruma (総本店)', jp:'博多だるま 総本店', area:'Watanabe-dori', cat:'rich', emoji:'✨',
+     style:'ทงคตสึเข้มข้น เงาวับ ติดมัน', sig:'อาบุริชาชูเมง เส้นบางในซุป yobimodoshi เคี่ยว 16 ชม.', price:'~800¥ (ชาชู+ไข่ ~1,300)', hours:'12:00–14:00 & 19:00–23:00 (ปิดอังคาร)', rating:'4.0 ★ (3,046)',
+     why:'ทงคตสึเคี่ยว 16 ชม. เข้มเงาวับเคลือบเส้นบางเหมือนไหม ร้านต้นตำรับย่านวาตานาเบะ', lat:33.5852202, lng:130.4060012},
+    {name:'Menya Kanetora (天神本店)', jp:'麺や兼虎 天神本店', area:'Tenjin · Watanabe-dori', cat:'other', emoji:'🍥',
+     style:'สึเกะเมง (เส้นจิ้ม)', sig:'โนโกสึเกะเมง เส้นหนาจิ้มซุปหมู-ปลาเข้มข้น · อาจิตามะเด่นสุด', price:'~1,000¥', hours:'ทุกวัน 11:00–23:00', rating:'4.3 ★ (3,223)',
+     why:'สึเกะเมงเส้นหนาเด้ง จิ้มซุปหมู-ปลาเข้มข้นเกาะเส้น คิวยาวตลอด เปลี่ยนบรรยากาศจากทงคตสึ', lat:33.5873313, lng:130.4012806},
+    {name:'Kawanosoba', jp:'川のそば (かわのそば)', area:'Nakasu', cat:'other', emoji:'🐔',
+     style:'ชูกะโซบะไก่ซีอิ๊ว (ไม่ใช่ทงคตสึ)', sig:'ชูกะโซบะไก่ซัตสึมะ ซีอิ๊ว คู่ยากิโทริหนังไก่ย่าง', price:'โชยุ 750¥ / ไวท์โชยุ 800¥', hours:'ทุกวัน 18:00–03:00 (LO 03:00)', rating:'4.7 ★ (1,627)',
+     why:'อิซากายะดึกย่านนากาสึ ซุปไก่ซีอิ๊วใสหวานละมุน คู่หนังไก่ย่างกรอบ ทางเลือกไม่ใช่ทงคตสึ', lat:33.5918359, lng:130.4079121},
+    {name:'Oshige Shokudo (今泉)', jp:'大重食堂 今泉店', area:'Imaizumi', cat:'other', emoji:'🔬',
+     style:'ซุปใส jun-ramen ซีอิ๊ว (ไม่ใช่ทงคตสึ)', sig:'Jun-ramen Nanabushi ซุปใสกลั่นจากบุชิ 7 ชนิดด้วยไซฟอน', price:'Jun-ramen ~1,700¥', hours:'11:00–15:00 & 18:00–22:30 (ปิดพุธ)', rating:'4.3 ★ (754)',
+     why:'บอลแชมป์ World Ramen Grand Prix ซุปใสจากบุชิ 7 ชนิดกลั่นผ่านไซฟอนแก้วต่อหน้า ไม่ใส่ผงชูรส', lat:33.5869882, lng:130.4007159}
+  ];
+
+  function navUrl(s){ return 'https://www.google.com/maps/search/?api=1&query=' + s.lat + ',' + s.lng; }
+  function esc(t){ return String(t==null?'':t).replace(/[&<>"]/g, function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+
+  // ---- Build the list first (works even if the map library fails to load) ----
+  var list = document.getElementById('list');
+  shops.forEach(function(s, i){
+    var cat = CAT[s.cat] || CAT.other;
+    var el = document.createElement('div');
+    el.className = 'shop'; el.style.borderLeftColor = cat.c; el.id = 'shop'+i;
+    el.innerHTML =
+      '<div class="r1"><div><div class="name">'+s.emoji+' '+esc(s.name)+'</div><div class="jp">'+esc(s.jp)+'</div></div>'+
+      '<div class="cat" style="background:'+cat.c+'">'+esc(cat.t)+'</div></div>'+
+      '<div class="style">'+esc(s.style)+'</div>'+
+      '<div class="why">'+esc(s.why)+'</div>'+
+      '<div class="meta"><span class="chip star">'+esc(s.rating)+'</span><span class="chip">📍 '+esc(s.area)+'</span><span class="chip">💴 '+esc(s.price)+'</span><span class="chip">🕙 '+esc(s.hours)+'</span></div>'+
+      '<div class="sig"><b>เมนูเด่น:</b> '+esc(s.sig)+'</div>'+
+      '<a class="nav" style="background:'+cat.c+'" target="_blank" rel="noopener" href="'+navUrl(s)+'" onclick="event.stopPropagation()">🧭 นำทางด้วย Google Maps</a>';
+    el.addEventListener('click', function(){ select(i, true); });
+    list.appendChild(el);
+  });
+
+  // ---- Map (guarded: list above still works if Leaflet/tiles are unavailable) ----
+  var map = null, markers = [];
+  if (typeof L !== 'undefined') {
+    try {
+      map = L.map('map', {zoomControl:true, scrollWheelZoom:true});
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom:19, attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+      }).addTo(map);
+      var bounds = [];
+      shops.forEach(function(s, i){
+        var cat = CAT[s.cat] || CAT.other;
+        var icon = L.divIcon({
+          className:'', iconSize:[30,30], iconAnchor:[15,30], popupAnchor:[0,-28],
+          html:'<div class="pin" style="background:'+cat.c+'"><span>'+s.emoji+'</span></div>'
+        });
+        var m = L.marker([s.lat, s.lng], {icon:icon}).addTo(map);
+        m.bindPopup(
+          '<div class="pop"><div class="b">'+esc(s.name)+'</div>'+
+          '<div class="s">'+esc(s.style)+'</div>'+
+          '<div class="a">'+esc(s.rating)+' · '+esc(s.area)+'<br>'+esc(s.why)+'</div>'+
+          '<a class="nav" style="background:'+cat.c+'" target="_blank" rel="noopener" href="'+navUrl(s)+'">🧭 นำทาง</a></div>');
+        m.on('click', function(){ select(i, false); });
+        markers.push(m); bounds.push([s.lat, s.lng]);
+      });
+      map.fitBounds(bounds, {padding:[50,50]});
+    } catch(e){ map = null; }
+  }
+  if (!map) { var mapEl = document.getElementById('map'); if (mapEl) mapEl.style.display = 'none'; }
+
+  var selEl = null;
+  function select(i, fromList){
+    var s = shops[i];
+    if (map && markers[i]) { map.flyTo([s.lat, s.lng], Math.max(map.getZoom(), 16), {duration:.5}); markers[i].openPopup(); }
+    if(selEl) selEl.classList.remove('sel');
+    selEl = document.getElementById('shop'+i);
+    if(selEl){ selEl.classList.add('sel'); if(fromList !== true) selEl.scrollIntoView({behavior:'smooth', block:'nearest'}); }
+  }
+</script>
+</body>
+</html>
