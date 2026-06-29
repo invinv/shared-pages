@@ -59,6 +59,19 @@
     color:#fff; background:var(--accent); text-decoration:none; padding:8px 12px; border-radius:9px;
   }
   .nav:active{filter:brightness(.93)}
+  .locate{
+    width:100%; margin-top:10px; padding:10px 12px; border:1px solid var(--line);
+    background:#fff; border-radius:10px; font:inherit; font-size:13.5px; font-weight:800;
+    color:#1d6fe0; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:7px;
+  }
+  .locate:active{background:#eef4fc}
+  .locate:disabled{opacity:.7}
+  .you{
+    width:16px; height:16px; border-radius:50%; background:#1d6fe0; border:3px solid #fff;
+    box-shadow:0 0 0 2px #1d6fe0, 0 2px 6px rgba(0,0,0,.35);
+  }
+  .chip.distchip{background:#e7eff9; color:#1d4e89}
+  .chip.distchip.near{background:#1d6fe0; color:#fff}
   .leaflet-popup-content-wrapper{border-radius:12px}
   .leaflet-popup-content{margin:12px 14px; font-family:inherit; min-width:180px}
   .pop .b{font-size:15px; font-weight:800}
@@ -92,6 +105,7 @@
       <span class="lg"><span class="dot" style="background:#a8842c"></span>นางาฮามะ</span>
       <span class="lg"><span class="dot" style="background:#5a4f82"></span>สึเกะเมง/ไม่ใช่ทงคตสึ</span>
     </div>
+    <button id="locateBtn" class="locate" type="button">📍 หาตำแหน่งฉัน — เรียงร้านใกล้สุด</button>
   </header>
   <div class="content">
     <div id="map"></div>
@@ -205,6 +219,58 @@
     selEl = document.getElementById('shop'+i);
     if(selEl){ selEl.classList.add('sel'); if(fromList !== true) selEl.scrollIntoView({behavior:'smooth', block:'nearest'}); }
   }
+
+  // ---- "Find my location": geolocate, mark, show distances, sort by nearest ----
+  var userLatLng = null, youMarker = null, accCircle = null;
+  function haversine(la1, lo1, la2, lo2){
+    var R = 6371, toR = Math.PI/180;
+    var dLa = (la2-la1)*toR, dLo = (lo2-lo1)*toR;
+    var s = Math.sin(dLa/2)*Math.sin(dLa/2) + Math.cos(la1*toR)*Math.cos(la2*toR)*Math.sin(dLo/2)*Math.sin(dLo/2);
+    return R*2*Math.atan2(Math.sqrt(s), Math.sqrt(1-s));
+  }
+  function fmtDist(km){ return km < 1 ? Math.round(km*1000)+' ม.' : km.toFixed(km<10?1:0)+' กม.'; }
+
+  function applyDistances(){
+    if(!userLatLng) return;
+    var listEl = document.getElementById('list');
+    var order = shops.map(function(s, i){ return {i:i, d:haversine(userLatLng[0], userLatLng[1], s.lat, s.lng)}; });
+    order.sort(function(a,b){ return a.d - b.d; });
+    order.forEach(function(o, rank){
+      var el = document.getElementById('shop'+o.i); if(!el) return;
+      var chip = el.querySelector('.distchip');
+      if(!chip){
+        chip = document.createElement('span'); chip.className = 'chip distchip';
+        var meta = el.querySelector('.meta'); if(meta) meta.insertBefore(chip, meta.firstChild);
+      }
+      chip.textContent = '📏 ' + fmtDist(o.d) + ' จากคุณ';
+      chip.classList.toggle('near', rank === 0);
+      listEl.appendChild(el); // reorder DOM nearest-first (ids stay stable)
+    });
+  }
+
+  function locateMe(){
+    var btn = document.getElementById('locateBtn');
+    if(!navigator.geolocation){ alert('เบราว์เซอร์นี้ไม่รองรับการหาตำแหน่ง'); return; }
+    btn.disabled = true; btn.textContent = '⏳ กำลังหาตำแหน่ง…';
+    navigator.geolocation.getCurrentPosition(function(pos){
+      userLatLng = [pos.coords.latitude, pos.coords.longitude];
+      var acc = pos.coords.accuracy || 0;
+      if(map){
+        if(youMarker) map.removeLayer(youMarker);
+        if(accCircle) map.removeLayer(accCircle);
+        youMarker = L.marker(userLatLng, {icon:L.divIcon({className:'', iconSize:[16,16], iconAnchor:[8,8], html:'<div class="you"></div>'}), zIndexOffset:1000}).addTo(map);
+        youMarker.bindPopup('📍 ตำแหน่งของคุณ');
+        if(acc) accCircle = L.circle(userLatLng, {radius:acc, color:'#1d6fe0', weight:1, fillColor:'#1d6fe0', fillOpacity:.12}).addTo(map);
+        map.flyTo(userLatLng, 15, {duration:.6});
+      }
+      applyDistances();
+      btn.disabled = false; btn.textContent = '🔄 อัปเดตตำแหน่ง (เรียงใกล้สุดแล้ว)';
+    }, function(err){
+      btn.disabled = false; btn.textContent = '📍 หาตำแหน่งฉัน — เรียงร้านใกล้สุด';
+      alert(err && err.code === 1 ? 'กรุณาอนุญาตให้เข้าถึงตำแหน่งในเบราว์เซอร์ก่อน' : 'หาตำแหน่งไม่สำเร็จ ลองใหม่อีกครั้ง');
+    }, {enableHighAccuracy:true, timeout:10000, maximumAge:60000});
+  }
+  document.getElementById('locateBtn').addEventListener('click', locateMe);
 </script>
 </body>
 </html>
