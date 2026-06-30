@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>AI Automation Stack</title>
+  <style>
+    :root {
+      --bg: #0d0d0d; --surface: #161616; --surface2: #1e1e1e; --border: #2a2a2a;
+      --text: #efefef; --muted: #777; --dim: #444;
+      --teal: #00c9a7; --purple: #a78bfa; --orange: #fb923c;
+      --green: #4ade80; --yellow: #fbbf24; --blue: #60a5fa; --red: #f87171;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; min-height: 100dvh; }
+    .live-bar { background: #111; border-bottom: 1px solid var(--border); padding: 10px 20px; }
+    .live-bar-inner { max-width: 960px; margin: 0 auto; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .live-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--green); font-weight: 600; margin-right: 4px; }
+    .live-pill { background: rgba(74,222,128,0.08); border: 1px solid rgba(74,222,128,0.2); color: #86efac; padding: 3px 10px; border-radius: 20px; font-size: 0.72rem; white-space: nowrap; }
+    .header { max-width: 960px; margin: 0 auto; padding: 32px 20px 20px; }
+    .header h1 { font-size: clamp(1.5rem,5vw,2rem); font-weight: 700; letter-spacing: -0.02em; margin-bottom: 8px; }
+    .header p { color: var(--muted); font-size: 0.9rem; line-height: 1.6; max-width: 560px; }
+    .stats-row { max-width: 960px; margin: 0 auto; padding: 0 20px 24px; display: flex; gap: 12px; flex-wrap: wrap; }
+    .stat { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px 18px; min-width: 100px; }
+    .stat-num { font-size: 1.6rem; font-weight: 700; line-height: 1; margin-bottom: 4px; }
+    .stat-num.green { color: var(--green); } .stat-num.yellow { color: var(--yellow); } .stat-num.blue { color: var(--blue); }
+    .stat-label { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+    .section { max-width: 960px; margin: 0 auto; padding: 0 20px 32px; }
+    .section-title { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+    .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    .rec-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(240px,1fr)); gap: 12px; margin-bottom: 36px; }
+    .rec-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 16px; padding: 20px; position: relative; overflow: hidden; }
+    .rec-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; border-radius: 16px 16px 0 0; }
+    .rec-card.vps::before { background: var(--teal); } .rec-card.hybrid::before { background: var(--orange); } .rec-card.routine::before { background: var(--purple); }
+    .rec-rank { font-size: 1.4rem; margin-bottom: 10px; }
+    .rec-title { font-size: 0.98rem; font-weight: 650; margin-bottom: 6px; line-height: 1.3; }
+    .rec-why { font-size: 0.8rem; color: var(--muted); line-height: 1.55; margin-bottom: 14px; }
+    .rec-meta { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+    .filters { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 18px; }
+    .filter-btn { background: var(--surface); border: 1px solid var(--border); color: var(--muted); padding: 6px 15px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; transition: all 0.12s; }
+    .filter-btn:hover { border-color: #555; color: var(--text); }
+    .filter-btn.active { background: var(--text); color: var(--bg); border-color: var(--text); font-weight: 600; }
+    .cards-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(256px,1fr)); gap: 10px; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 9px; transition: border-color 0.12s; }
+    .card:hover { border-color: #3a3a3a; } .card.hidden { display: none; }
+    .card-top { display: flex; justify-content: space-between; align-items: center; gap: 6px; }
+    .cat-badge { font-size: 0.68rem; padding: 2px 8px; border-radius: 8px; font-weight: 600; white-space: nowrap; }
+    .cat-badge.vps { background: rgba(0,201,167,0.1); color: var(--teal); border: 1px solid rgba(0,201,167,0.2); }
+    .cat-badge.routine { background: rgba(167,139,250,0.1); color: var(--purple); border: 1px solid rgba(167,139,250,0.2); }
+    .cat-badge.hybrid { background: rgba(251,146,60,0.1); color: var(--orange); border: 1px solid rgba(251,146,60,0.2); }
+    .status-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+    .status-dot.idea { background: #3a3a3a; border: 1px solid #555; }
+    .status-dot.planned { background: var(--blue); opacity: 0.8; }
+    .status-dot.building { background: var(--yellow); }
+    .status-dot.live { background: var(--green); box-shadow: 0 0 5px rgba(74,222,128,0.6); }
+    .card-title { font-size: 0.92rem; font-weight: 600; line-height: 1.3; }
+    .card-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.55; flex: 1; }
+    .io-row { font-size: 0.73rem; color: #555; display: flex; gap: 5px; align-items: center; flex-wrap: wrap; border-top: 1px solid var(--border); padding-top: 9px; margin-top: auto; }
+    .io-trigger { color: #666; } .io-arrow { color: #3a3a3a; } .io-output { color: #666; }
+    .card-bottom { display: flex; justify-content: space-between; align-items: center; gap: 6px; }
+    .effort { font-size: 0.68rem; padding: 2px 7px; border-radius: 6px; font-weight: 600; }
+    .effort.low { background: rgba(74,222,128,0.1); color: var(--green); }
+    .effort.med { background: rgba(251,191,36,0.1); color: var(--yellow); }
+    .effort.high { background: rgba(248,113,113,0.1); color: var(--red); }
+    .value-dots { display: flex; gap: 3px; align-items: center; }
+    .vdot { width: 5px; height: 5px; border-radius: 50%; background: #2a2a2a; }
+    .vdot.on { background: var(--yellow); }
+    .status-txt { font-size: 0.68rem; color: var(--dim); white-space: nowrap; }
+    .status-txt.live { color: var(--green); } .status-txt.building { color: var(--yellow); } .status-txt.planned { color: var(--blue); }
+    .legend { max-width: 960px; margin: 0 auto; padding: 0 20px 40px; display: flex; gap: 20px; flex-wrap: wrap; }
+    .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.72rem; color: var(--muted); }
+    @media (max-width: 480px) { .cards-grid { grid-template-columns: 1fr; } .rec-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+<div class="live-bar"><div class="live-bar-inner">
+  <span class="live-label">● Live</span>
+  <span class="live-pill">VPS Todoist Reminders</span>
+  <span class="live-pill">VPS Spending Card</span>
+  <span class="live-pill">intha-research Alerts</span>
+  <span class="live-pill">Inn Overnight Worker</span>
+  <span class="live-pill">Facebook News Bot</span>
+</div></div>
+<div class="header">
+  <h1>AI Automation Stack 🤖</h1>
+  <p>All the AI workers, crons, and routines running (or planned) across the stack. VPS, Claude.ai Routines, and hybrids — while you sleep.</p>
+</div>
+<div class="stats-row">
+  <div class="stat"><div class="stat-num green" id="stat-live">—</div><div class="stat-label">Live</div></div>
+  <div class="stat"><div class="stat-num yellow" id="stat-building">—</div><div class="stat-label">Building</div></div>
+  <div class="stat"><div class="stat-num blue" id="stat-planned">—</div><div class="stat-label">Planned / Ideas</div></div>
+</div>
+<div class="section">
+  <div class="section-title">Recommended next</div>
+  <div class="rec-grid">
+    <div class="rec-card vps"><div class="rec-rank">🥇</div><div class="rec-title">Inn Prospect Follow-up Alert</div><div class="rec-why">Daily Supabase query — fires Telegram if any salon has follow_up_date ≤ today. Lowest effort, highest ROI. CRM table already exists.</div><div class="rec-meta"><span class="cat-badge vps">VPS Cron</span><span class="effort low">Low effort</span></div></div>
+    <div class="rec-card hybrid"><div class="rec-rank">🥈</div><div class="rec-title">Ad Anomaly Alert via Telegram</div><div class="rec-why">Thai market has ZERO competitors. Meta Ads API → anomaly detection → Telegram. Identified as #1 Thai product idea by 10-agent research swarm.</div><div class="rec-meta"><span class="cat-badge hybrid">Hybrid</span><span class="effort high">High effort</span></div></div>
+    <div class="rec-card routine"><div class="rec-rank">🥉</div><div class="rec-title">Weekly Open Loops Digest</div><div class="rec-why">Claude.ai Routine reads memory MCP → surfaces all open loops stale >7 days across every project → creates a prioritized Todoist list.</div><div class="rec-meta"><span class="cat-badge routine">Claude Routine</span><span class="effort med">Med effort</span></div></div>
+  </div>
+  <div class="section-title">All automations</div>
+  <div class="filters">
+    <button class="filter-btn active" onclick="filter('all',this)">All</button>
+    <button class="filter-btn" onclick="filter('vps',this)">VPS Cron</button>
+    <button class="filter-btn" onclick="filter('routine',this)">Claude Routine</button>
+    <button class="filter-btn" onclick="filter('hybrid',this)">Hybrid</button>
+    <button class="filter-btn" onclick="filter('live',this)">✅ Live</button>
+    <button class="filter-btn" onclick="filter('idea',this)">💡 Ideas</button>
+  </div>
+  <div class="cards-grid" id="grid"></div>
+</div>
+<div class="legend">
+  <div class="legend-item"><span class="status-dot live"></span> Live</div>
+  <div class="legend-item"><span class="status-dot building"></span> Building</div>
+  <div class="legend-item"><span class="status-dot planned"></span> Planned</div>
+  <div class="legend-item"><span class="status-dot idea"></span> Idea</div>
+  <div class="legend-item" style="margin-left:12px"><span style="display:flex;gap:2px"><span class="vdot on"></span><span class="vdot on"></span><span class="vdot on"></span><span class="vdot on"></span><span class="vdot on"></span></span>&nbsp;= ROI score</div>
+</div>
+<script>
+const ideas=[
+  {cat:'vps',catLabel:'VPS Cron',title:'Todoist Daily Reminders',desc:'Tasks due today + yesterday via Todoist Sync API. Fires 4× daily (08/12/16/20 BKK).',trigger:'Every 4h cron',output:'Telegram',effort:'low',value:5,status:'live'},
+  {cat:'vps',catLabel:'VPS Cron',title:'14-Day Spending Card',desc:'Rolling spend summary from Google Sheets — category bars + Grok headline. Dark PNG via PIL.',trigger:'Daily cron',output:'Telegram PNG',effort:'low',value:4,status:'live'},
+  {cat:'vps',catLabel:'VPS Cron',title:'intha-research Stock Alerts',desc:'25-ticker watchlist on VPS. Signal alerts as styled Telegram PNGs during market hours.',trigger:'Market hours cron',output:'Telegram PNG',effort:'low',value:4,status:'live'},
+  {cat:'routine',catLabel:'Claude Routine',title:'Inn Overnight Code Worker',desc:'Reads mission from overnight-control → codes/reviews nailsalon repo → pushes PR branch → drops Todoist task. 02:30 BKK nightly.',trigger:'02:30 BKK nightly',output:'PR branch + Todoist',effort:'low',value:4,status:'live'},
+  {cat:'hybrid',catLabel:'Hybrid',title:'Facebook News Bot',desc:'Autonomous Thai news pipeline: ingestion → Grok drafts FB posts → schedules + posts unattended. M5 = 14 days fully hands-off.',trigger:'Systemd on VPS',output:'Facebook Page',effort:'high',value:4,status:'building'},
+  {cat:'vps',catLabel:'VPS Cron',title:'Inn Prospect Follow-up Alert',desc:'Daily Supabase query on prospects table — Telegram if any salon has follow_up_date ≤ today. Stale follow-ups kill deals.',trigger:'09:00 BKK daily',output:'Telegram',effort:'low',value:5,status:'idea'},
+  {cat:'vps',catLabel:'VPS Cron',title:'Morning Project Digest',desc:'Aggregates overnight handoff notes, stale open loops from memory MCP, and git activity into one morning Telegram card.',trigger:'08:30 BKK daily',output:'Telegram',effort:'med',value:4,status:'idea'},
+  {cat:'vps',catLabel:'VPS Cron',title:'Trial Salon Churn Detector',desc:'Prospects in trial stage with 0 bookings in 7 days → Todoist nudge task queued. Early warning before they go cold.',trigger:'Daily cron',output:'Todoist task',effort:'low',value:4,status:'idea'},
+  {cat:'vps',catLabel:'VPS Cron',title:'Facebook Bot Health Check',desc:'VPS systemd status + last post timestamp. Telegram alert if bot silent > 25h.',trigger:'Every 6h cron',output:'Telegram',effort:'low',value:3,status:'idea'},
+  {cat:'vps',catLabel:'VPS Cron',title:'intha-research Earnings Calendar',desc:'Alert 1 day before earnings for any watchlist ticker. Grok adds consensus estimate + last surprise.',trigger:'Daily cron',output:'Telegram',effort:'low',value:3,status:'idea'},
+  {cat:'vps',catLabel:'VPS Cron',title:'Inn Booking Anomaly Monitor',desc:'Watch prod metrics: new signups, abandoned bookings, Vercel error spikes. Daily digest.',trigger:'Daily cron',output:'Telegram',effort:'med',value:3,status:'idea'},
+  {cat:'vps',catLabel:'VPS Cron',title:'Pilates Booking Weekly Stats',desc:'Firestore query: confirmed bookings, active customers, revenue estimate. One card, no login needed.',trigger:'Monday 09:00 BKK',output:'Telegram',effort:'low',value:2,status:'idea'},
+  {cat:'routine',catLabel:'Claude Routine',title:'Weekly Open Loops Digest',desc:'Reads memory MCP, surfaces open loops stale >7 days across every project, creates prioritized Todoist list.',trigger:'Monday 08:00 BKK',output:'Todoist tasks',effort:'med',value:4,status:'idea'},
+  {cat:'routine',catLabel:'Claude Routine',title:'clawdbot-cozy-space Overnight Worker',desc:'Overnight worker on this repo — reviews tooling, documents open loops, proposes CLAUDE.md improvements.',trigger:'03:30 BKK nightly',output:'PR branch + Todoist',effort:'low',value:3,status:'idea'},
+  {cat:'routine',catLabel:'Claude Routine',title:'Memory Reflect & Propose (Phase 2+3)',desc:'Agent digests all projects, flags stale/contradicted memories, proposes new ones. Keeps memory accurate.',trigger:'Weekly',output:'Memory MCP updates',effort:'med',value:3,status:'idea'},
+  {cat:'routine',catLabel:'Claude Routine',title:'intha-research Weekly Brief',desc:'Macro context, top movers, position commentary for the 25-ticker watchlist → Google Doc + Telegram summary.',trigger:'Sunday 20:00 BKK',output:'Google Doc + Telegram',effort:'med',value:3,status:'idea'},
+  {cat:'hybrid',catLabel:'Hybrid',title:'Ad Anomaly Alert via Telegram',desc:'Meta Ads API → CPM/CTR/spend anomaly detection → Grok diagnosis → Telegram alert. Zero Thai competitors.',trigger:'Every 6h VPS cron',output:'Telegram',effort:'high',value:5,status:'idea'},
+  {cat:'hybrid',catLabel:'Hybrid',title:'Inn Salon Lead Sourcer',desc:'Scrapes Google Maps for salons in Ari/Thonglor/Ekkamai → Grok enriches → auto-populates Supabase prospects table.',trigger:'Weekly / on demand',output:'Supabase prospects',effort:'high',value:4,status:'idea'},
+  {cat:'hybrid',catLabel:'Hybrid',title:'Personalized Outreach Drafter',desc:'Reads cold prospects → Claude writes personalized LINE/IG DM per salon → saves as Todoist draft for manual send.',trigger:'On demand',output:'Todoist drafts',effort:'med',value:4,status:'idea'},
+  {cat:'hybrid',catLabel:'Hybrid',title:'Restaurant Review Monitor',desc:'#2 Thai product idea. Wongnai + Google + Facebook reviews → AI response drafts in Thai. No tool does all three.',trigger:'Daily cron',output:'Telegram / Dashboard',effort:'high',value:4,status:'idea'},
+];
+function dots(n){return Array.from({length:5},(_,i)=>`<span class="vdot${i<n?' on':''}"></span>`).join('');}
+function render(){
+  document.getElementById('stat-live').textContent=ideas.filter(i=>i.status==='live').length;
+  document.getElementById('stat-building').textContent=ideas.filter(i=>i.status==='building').length;
+  document.getElementById('stat-planned').textContent=ideas.filter(i=>i.status==='planned'||i.status==='idea').length;
+  document.getElementById('grid').innerHTML=ideas.map(i=>`
+    <div class="card" data-cat="${i.cat}" data-status="${i.status}">
+      <div class="card-top"><span class="cat-badge ${i.cat}">${i.catLabel}</span><span class="status-dot ${i.status}"></span></div>
+      <div class="card-title">${i.title}</div>
+      <div class="card-desc">${i.desc}</div>
+      <div class="io-row"><span class="io-trigger">${i.trigger}</span><span class="io-arrow">→</span><span class="io-output">${i.output}</span></div>
+      <div class="card-bottom">
+        <span class="effort ${i.effort}">${{low:'Low',med:'Med',high:'High'}[i.effort]}</span>
+        <div class="value-dots">${dots(i.value)}</div>
+        <span class="status-txt ${i.status}">${{live:'✅ Live',building:'🔨 Building',planned:'📋 Planned',idea:'💡 Idea'}[i.status]}</span>
+      </div>
+    </div>`).join('');
+}
+function filter(f,btn){
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.card').forEach(c=>{
+    const show=f==='all'?true:f==='live'?c.dataset.status==='live':f==='idea'?(c.dataset.status==='idea'||c.dataset.status==='planned'):c.dataset.cat===f;
+    c.classList.toggle('hidden',!show);
+  });
+}
+render();
+</script>
+</body>
+</html>
