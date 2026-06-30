@@ -110,7 +110,7 @@
 <aside class="sidebar" id="sidebar">
   <div class="sbhead">
     <div class="top">
-      <div class="ttl">🗺️ ร้านแบรนด์ — ฟุกุโอกะ<small>25 ร้าน · แตะการ์ด/หมุดเพื่อนำทาง</small></div>
+      <div class="ttl">🗺️ ร้านแบรนด์ — ฟุกุโอกะ<small>52 ร้าน · แตะการ์ด/หมุดเพื่อนำทาง</small></div>
       <div class="hbtns">
         <a class="iconbtn" href="fukuoka-brands.html" title="กลับ">←</a>
         <button class="iconbtn" id="hideBtn" type="button" title="ซ่อนรายการ — ดูแผนที่เต็มจอ">✕</button>
@@ -126,7 +126,7 @@
   </div>
   <div class="list" id="list"></div>
 </aside>
-<button class="fab" id="openBtn" type="button">📋 รายการร้าน (25)</button>
+<button class="fab" id="openBtn" type="button">📋 รายการร้าน (52)</button>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
   integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
@@ -207,7 +207,34 @@
      note:'select shop อเมริกันแคชชวล + เดนิมวินเทจ', lat:33.5897, lng:130.42065},
     {brand:'Fred Perry', emoji:'🎽', store:'AMU Plaza Hakata 5F', area:'Hakata', floor:'AMU 5F',
      addr:'1-1 Hakata-eki Chuo-gai (JR Hakata City), Hakata-ku', hours:'10:00–20:00',
-     note:'โปโลพวงหรีดสไตล์มอด มีเคาน์เตอร์ปลอดภาษี', lat:33.58995, lng:130.42025}
+     note:'โปโลพวงหรีดสไตล์มอด มีเคาน์เตอร์ปลอดภาษี', lat:33.58995, lng:130.42025},
+    {brand:"Carhartt WIP Store Fukuoka", emoji:"🧢", store:"1F (มีคาเฟ่ในร้าน)", area:"Daimyo", floor:"", addr:"1-2-51 Daimyo, Chuo-ku, Fukuoka 810-0041", hours:"Mon-Sat 11:00-20:00", note:"เวิร์กแวร์เยอรมันที่กลายเป็นสตรีทแวร์คัลต์ มีเคาน์เตอร์กาแฟในร้านกลางย่านไดเมียว", lat:33.586093, lng:130.395369},
+    {brand:"Supreme Fukuoka", emoji:"🛹", store:"1F (247ビル)", area:"Daimyo", floor:"", addr:"1-15-35 Daimyo, Chuo-ku, Fukuoka 810-0041", hours:"Daily 11:00-20:00", note:"แหล่งรวมบ็อกซ์โลโก้แห่งคิวชู สาวกสตรีทแวร์ต่อคิวรอดรอปที่ไดเมียว", lat:33.587407, lng:130.39656},
+    {brand:"Stussy Fukuoka Chapter", emoji:"🌴", store:"1F, Maronie NEXT", area:"Tenjin", floor:"", addr:"2-5-13 Tenjin, Chuo-ku, Fukuoka 810-0001", hours:"Daily 11:00-19:00", note:"แชปเตอร์ที่ 7 ของญี่ปุ่น ขายสตรีทแวร์เซิร์ฟ-สเกตสไตล์แคลิฟอร์เนียใจกลางเทนจิน", lat:33.587758, lng:130.39741},
+    {brand:"BAPE STORE Fukuoka", emoji:"🐵", store:"1F", area:"Daimyo", floor:"", addr:"1-11-28 Daimyo, Chuo-ku, Fukuoka 810-0041", hours:"Daily 11:00-19:00", note:"วิหารลายเอป-คาโมแห่งไดเมียว ฐานที่มั่นสตรีทแวร์โตเกียวในคิวชู", lat:33.587152, lng:130.394976},
+    {brand:"Champion", emoji:"🏅", store:"1F (Sardin Daimyo)", area:"Daimyo", floor:"", addr:"2-1-21 Daimyo, Chuo-ku, Fukuoka 810-0041", hours:"Daily 11:00-20:00", note:"ศาลเจ้าของฮู้ดดี้ reverse-weave ใจกลางไดเมียว ใกล้สถานีอาคาซากะ", lat:33.588191, lng:130.394155},
+    {brand:"WEGO Fukuoka PARCO", emoji:"🧷", store:"6F (Fukuoka PARCO)", area:"Tenjin", floor:"", addr:"2-11-1 Tenjin, Chuo-ku, Fukuoka 810-0001", hours:"10:00-20:30 (ตามวันหยุด PARCO)", note:"WEGO ใหญ่สุดในคิวชู สตรีทแวร์สไตล์ฮาราจูกุราคาเบาและของวินเทจ", lat:33.590905, lng:130.398665},
+    {brand:"JOURNAL STANDARD", emoji:"🧥", store:"1F (หญิง) / 2F (ชาย) Fukuoka PARCO", area:"Tenjin", floor:"", addr:"2-11-1 Tenjin, Chuo-ku, Fukuoka 810-0001", hours:"10:00-20:30 (ตาม PARCO)", note:"เซเลกต์ช็อปสไตล์โตเกียว เบสิกแนวเฟรนช์คาชวลและของอิมพอร์ตคัดสรร 2 ชั้น", lat:33.590665, lng:130.398832},
+    {brand:"nano universe", emoji:"👔", store:"3F (Fukuoka PARCO)", area:"Tenjin", floor:"", addr:"2-11-1 Tenjin, Chuo-ku, Fukuoka 810-0001", hours:"10:00-20:30 daily", note:"เซเลกต์ช็อปจากโตเกียว ผสานเทเลอริงยุโรปกับสตรีทญี่ปุ่นใส่ได้ทุกวัน", lat:33.590665, lng:130.398499},
+    {brand:"BEAUTY&YOUTH UNITED ARROWS", emoji:"🏹", store:"2F (Solaria Plaza)", area:"Tenjin", floor:"", addr:"2-2-43 Tenjin, Chuo-ku, Fukuoka 810-0001", hours:"Weekdays 11:00-20:00; Sat/Sun/holidays 10:00-20:00", note:"ไลน์เยาว์วัยแนวสตรีทของ United Arrows บนชั้นโซลาเรียพลาซ่าสุดเก๋", lat:33.589085, lng:130.398821},
+    {brand:"URBAN RESEARCH DOORS", emoji:"🌿", store:"3F (Solaria Plaza)", area:"Tenjin", floor:"", addr:"2-2-43 Tenjin, Chuo-ku, Fukuoka 810-0001", hours:"Mon-Fri 11:00-20:00; Sat/Sun/holidays 10:00-20:00", note:"เบสิกไลฟ์สไตล์โทนเอิร์ธและของแต่งบ้าน เหนือความวุ่นวายของโซลาเรีย", lat:33.588838, lng:130.399088},
+    {brand:"TOMORROWLAND", emoji:"✨", store:"1F (Solaria Plaza)", area:"Tenjin", floor:"", addr:"2-2-43 Tenjin, Chuo-ku, Fukuoka 810-0001", hours:"Weekdays 11:00-20:00; Sat/Sun/holidays 10:00-20:00", note:"เซเลกต์ช็อปเรือธงของญี่ปุ่น เทเลอริงยุโรปกับความคูลแบบเทนจิน", lat:33.589022, lng:130.398931},
+    {brand:"UNITED TOKYO", emoji:"🗼", store:"New Building 3F (Fukuoka PARCO)", area:"Tenjin", floor:"", addr:"2-11-1 Tenjin, Chuo-ku, Fukuoka 810-0001", hours:"10:00-20:00 (ตาม PARCO)", note:"เทเลอริงคอนเทมโพรารี Made-in-Japan ดีไซน์คมแบบผู้ใหญ่สไตล์โตเกียว", lat:33.590984, lng:130.398578},
+    {brand:"IDIOME", emoji:"🖤", store:"2F (Royal Parks Daimyo)", area:"Daimyo", floor:"", addr:"1-8-18 Daimyo, Chuo-ku, Fukuoka 810-0041", hours:"Daily 12:00-18:00", note:"เซเลกต์ช็อปคัลต์จากคุมาโมโตะ ขาย Dries Van Noten, doublet, TAAKK ในไดเมียว", lat:33.586383, lng:130.391563},
+    {brand:"ADDICTION FUKUOKA", emoji:"🔥", store:"1F (Ishii Building)", area:"Daimyo", floor:"", addr:"1-1-3 Daimyo, Chuo-ku, Fukuoka 810-0041", hours:"Daily 13:00-21:00", note:"ขาประจำไดเมียวตั้งแต่ปี 2005 คัดแบรนด์คัลต์จากญี่ปุ่นถึงไต้หวันทั้งชายหญิง", lat:33.586524, lng:130.39704},
+    {brand:"BIRTH DAY", emoji:"👖", store:"1F (Selva Nishi-Daimyo II)", area:"Daimyo", floor:"", addr:"1-2-37-1 Daimyo, Chuo-ku, Fukuoka 810-0041", hours:"Daily 11:00-20:00", note:"เซเลกต์ช็อปแนวไลฟ์สไตล์ มีเดนิม selvedge ดิบจาก MINEDENIM เป็นไฮไลต์", lat:33.585994, lng:130.39419},
+    {brand:"H&M Tenjin", emoji:"🛍️", store:"หลายชั้น (flagship)", area:"Daimyo", floor:"", addr:"1-15-1 Daimyo, Chuo-ku, Fukuoka 810-0041", hours:"Daily 10:00-22:00", note:"ยักษ์ฟาสต์แฟชั่นสวีเดน อัดแน่นเทรนด์ราคาเบาหลายชั้นกลางย่านไดเมียว", lat:33.587106, lng:130.397036},
+    {brand:"GAP Mitsukoshi", emoji:"🇺🇸", store:"3F (Fukuoka Mitsukoshi)", area:"Tenjin", floor:"", addr:"2-1-1 Tenjin, Chuo-ku, Fukuoka 810-0001", hours:"Daily 10:00-20:00", note:"เบสิกอเมริกันสำหรับทั้งครอบครัว ในห้างมิตสึโคชิเทนจิน", lat:33.588698, lng:130.399963},
+    {brand:"LACOSTE", emoji:"🐊", store:"3F (Fukuoka Mitsukoshi)", area:"Tenjin", floor:"", addr:"2-1-1 Tenjin, Chuo-ku, Fukuoka 810-8544", hours:"Daily 10:00-20:00", note:"โปโลเพรปปี้ฝรั่งเศสโลโก้จระเข้ บนชั้นเสื้อผ้าชายของมิตสึโคชิเทนจิน", lat:33.588439, lng:130.400175},
+    {brand:"ISSEY MIYAKE IWATAYA", emoji:"🎌", store:"4F (Iwataya Honten)", area:"Tenjin", floor:"", addr:"2-5-35 Tenjin, Chuo-ku, Fukuoka 810-8680", hours:"10:00-20:00 (ตาม Iwataya)", note:"งานพลีตเชิงประติมากรรมและเทเลอริงเชิงสถาปัตย์ บนชั้นพรีเมียมของอิวาตายะ", lat:33.588842, lng:130.397425},
+    {brand:"Patagonia Fukuoka", emoji:"🏔️", store:"1F (Tenjin Business Center)", area:"Tenjin", floor:"", addr:"1-10-20 Tenjin, Chuo-ku, Fukuoka 810-0001", hours:"Mon-Fri 12:00-19:00; Sat/Sun/holidays 11:00-18:00", note:"พาทาโกเนียไดเร็กต์แห่งเดียวในคิวชู เชื่อมตรงกับสถานีเทนจิน", lat:33.591405, lng:130.400585},
+    {brand:"Snow Peak", emoji:"⛺", store:"4F (ONE FUKUOKA BLDG.)", area:"Tenjin", floor:"", addr:"1-11-1 Tenjin, Chuo-ku, Fukuoka 810-0001", hours:"Weekdays 11:00-20:00; Sat/Sun/holidays 10:00-20:00", note:"แฟลกชิป 400 ตร.ม. รวมเต็นท์ เสื้อผ้าเมือง-เทรล และฟู้ดเคาน์เตอร์", lat:33.591288, lng:130.399329},
+    {brand:"SHIPS", emoji:"⚓", store:"3F (AMU Plaza Hakata)", area:"Hakata", floor:"", addr:"1-1 Hakataekichuogai, Hakata-ku, Fukuoka 812-0012", hours:"Daily 10:00-20:00", note:"เซเลกต์ช็อปไอคอนจากโตเกียว ผสมของอิมพอร์ตกับแบรนด์ตัวเองเหนือสถานีฮากาตะ", lat:33.5897, lng:130.4207},
+    {brand:"Bshop", emoji:"🧶", store:"4F (AMU Plaza Hakata)", area:"Hakata", floor:"", addr:"1-1 Hakataekichuogai, Hakata-ku, Fukuoka 812-0012", hours:"Daily 10:00-20:00", note:"เซเลกต์ช็อปจากโกเบ ขายเสื้อผ้าและของแต่งบ้านคลาสสิกใช้ได้ทุกวัน ใกล้สถานีฮากาตะ", lat:33.589998, lng:130.419704},
+    {brand:"DIESEL", emoji:"🔩", store:"2F (Hakata Hankyu MENS)", area:"Hakata", floor:"", addr:"1-1 Hakataekichuogai, Hakata-ku, Fukuoka 812-0012", hours:"Daily 10:00-21:00", note:"เดนิมอิตาเลียนสุดเท่บนชั้นเสื้อผ้าชายของฮากาตะฮันคิว ใกล้ประตูสถานี", lat:33.589524, lng:130.419838},
+    {brand:"Vivienne Westwood", emoji:"🪐", store:"4F (Hakata Hankyu)", area:"Hakata", floor:"", addr:"1-1 Hakataekichuogai, Hakata-ku, Fukuoka 812-0012", hours:"Daily 10:00-20:00", note:"เทเลอริงพังก์-ขุนนางอังกฤษและเครื่องประดับลายออร์บ ในฮากาตะฮันคิว", lat:33.589204, lng:130.419838},
+    {brand:"JEANASIS", emoji:"🖤", store:"B1F (AMU EST Hakata)", area:"Hakata", floor:"", addr:"1-1 Hakataekichuogai, Hakata-ku, Fukuoka 812-0012", hours:"Daily 10:00-20:00", note:"คาชวลสตรีทสไตล์โตเกียว เดนิมรีแล็กซ์ผสมซิลูเอตโหมดคม ใต้สถานีฮากาตะ", lat:33.589761, lng:130.421087},
+    {brand:"GAP / GapKids Canal City", emoji:"👕", store:"South Building 1F", area:"Canal City", floor:"", addr:"1-2-74 Sumiyoshi, Hakata-ku, Fukuoka 812-0018", hours:"Daily 10:00-21:00", note:"เบสิกคาชวลอเมริกันและเดนิมเด็ก ใต้หลังคาแคนาลซิตี้สว่างไสว", lat:33.58963, lng:130.410948}
   ];
 
   function navUrl(s){ return 'https://www.google.com/maps/search/?api=1&query=' + s.lat + ',' + s.lng; }
