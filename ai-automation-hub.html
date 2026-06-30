@@ -13,6 +13,13 @@
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; min-height: 100dvh; }
+    .nav { background: #111; border-bottom: 1px solid var(--border); padding: 11px 20px; }
+    .nav-inner { max-width: 960px; margin: 0 auto; display: flex; gap: 16px; align-items: center; }
+    .nav a { color: var(--muted); text-decoration: none; font-size: 0.78rem; transition: color 0.12s; }
+    .nav a:hover { color: var(--text); }
+    .nav a.active { color: var(--teal); font-weight: 600; }
+    .nav .spacer { flex: 1; }
+    .nav .tag { font-size: 0.66rem; color: var(--dim); border: 1px solid var(--border); padding: 2px 8px; border-radius: 20px; }
     .live-bar { background: #111; border-bottom: 1px solid var(--border); padding: 10px 20px; }
     .live-bar-inner { max-width: 960px; margin: 0 auto; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
     .live-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--green); font-weight: 600; margin-right: 4px; }
@@ -73,6 +80,12 @@
   </style>
 </head>
 <body>
+<div class="nav"><div class="nav-inner">
+  <a href="ai-automation-hub.html" class="active">Automation Stack</a>
+  <a href="agentic-assistant.html">The Dispatcher →</a>
+  <span class="spacer"></span>
+  <span class="tag">live</span>
+</div></div>
 <div class="live-bar"><div class="live-bar-inner">
   <span class="live-label">● Live</span>
   <span class="live-pill">VPS Todoist Reminders</span>

@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>The Dispatcher — Agentic Assistant</title>
+  <style>
+    :root {
+      --bg: #0d0d0d; --surface: #161616; --surface2: #1e1e1e; --border: #2a2a2a;
+      --text: #efefef; --muted: #777; --dim: #444;
+      --teal: #00c9a7; --purple: #a78bfa; --orange: #fb923c;
+      --green: #4ade80; --yellow: #fbbf24; --blue: #60a5fa; --red: #f87171;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
+      min-height: 100dvh;
+      padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom);
+    }
+    code { background: #222; padding: 1px 6px; border-radius: 4px; font-size: 0.85em; font-family: 'SF Mono', Menlo, monospace; color: #cbd5e1; }
+
+    /* Nav */
+    .nav { background: #111; border-bottom: 1px solid var(--border); padding: 11px 20px; }
+    .nav-inner { max-width: 980px; margin: 0 auto; display: flex; gap: 16px; align-items: center; }
+    .nav a { color: var(--muted); text-decoration: none; font-size: 0.78rem; transition: color 0.12s; }
+    .nav a:hover { color: var(--text); }
+    .nav a.active { color: var(--purple); font-weight: 600; }
+    .nav .spacer { flex: 1; }
+    .nav .tag { font-size: 0.66rem; color: var(--dim); border: 1px solid var(--border); padding: 2px 8px; border-radius: 20px; }
+
+    /* Header */
+    .header { max-width: 980px; margin: 0 auto; padding: 36px 20px 8px; }
+    .eyebrow { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--purple); font-weight: 600; margin-bottom: 10px; }
+    .header h1 { font-size: clamp(1.7rem, 5.5vw, 2.4rem); font-weight: 750; letter-spacing: -0.025em; margin-bottom: 12px; line-height: 1.1; }
+    .header .lede { color: #aaa; font-size: 0.98rem; line-height: 1.65; max-width: 660px; }
+    .header .lede b { color: var(--text); font-weight: 600; }
+
+    .section { max-width: 980px; margin: 0 auto; padding: 28px 20px; }
+    .section-title { font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.09em; color: var(--muted); margin-bottom: 18px; display: flex; align-items: center; gap: 9px; }
+    .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    .section-sub { color: var(--muted); font-size: 0.85rem; line-height: 1.6; margin: -8px 0 18px; max-width: 620px; }
+
+    /* Pipeline */
+    .pipeline { display: flex; gap: 8px; flex-wrap: wrap; }
+    .stage {
+      flex: 1; min-width: 116px; background: var(--surface); border: 1px solid var(--border);
+      border-radius: 13px; padding: 14px; cursor: pointer; transition: all 0.14s; position: relative;
+    }
+    .stage:hover { border-color: var(--purple); transform: translateY(-2px); }
+    .stage.active { border-color: var(--purple); background: var(--surface2); }
+    .stage-num { font-size: 0.66rem; color: var(--purple); font-weight: 700; margin-bottom: 7px; }
+    .stage-name { font-size: 0.86rem; font-weight: 650; margin-bottom: 4px; }
+    .stage-tool { font-size: 0.68rem; color: var(--dim); }
+    .stage-detail {
+      max-width: 980px; margin: 14px auto 0; background: var(--surface2);
+      border: 1px solid var(--purple); border-radius: 13px; padding: 18px 20px;
+      font-size: 0.86rem; line-height: 1.6; color: #bbb;
+    }
+    .stage-detail b { color: var(--text); }
+
+    /* Mode toggle */
+    .mode-wrap { display: flex; gap: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 11px; padding: 4px; width: fit-content; margin-bottom: 18px; }
+    .mode-btn { padding: 8px 20px; border: none; background: transparent; color: var(--muted); font-size: 0.82rem; font-weight: 600; cursor: pointer; border-radius: 8px; transition: all 0.12s; }
+    .mode-btn.active { background: var(--purple); color: #0d0d0d; }
+    .mode-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 15px; padding: 22px; }
+    .mode-panel h3 { font-size: 1rem; margin-bottom: 7px; }
+    .mode-panel p { color: var(--muted); font-size: 0.86rem; line-height: 1.6; margin-bottom: 16px; }
+    pre { background: #0a0a0a; border: 1px solid var(--border); border-radius: 11px; padding: 16px; overflow-x: auto; font-size: 0.78rem; line-height: 1.6; }
+    pre .k { color: var(--purple); } pre .s { color: var(--green); } pre .c { color: var(--dim); } pre .v { color: #e2b878; }
+
+    /* Roster */
+    .roster-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(248px, 1fr)); gap: 10px; }
+    .agent-card { background: var(--surface); border: 1px solid var(--border); border-radius: 13px; padding: 15px; transition: border-color 0.12s; }
+    .agent-card:hover { border-color: #3a3a3a; }
+    .agent-card .ac-type { font-size: 0.7rem; color: var(--teal); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 8px; }
+    .agent-card .ac-name { font-size: 0.9rem; font-weight: 650; margin-bottom: 5px; }
+    .agent-card .ac-desc { font-size: 0.77rem; color: var(--muted); line-height: 1.5; }
+
+    /* Autonomy ladder */
+    .ladder { display: flex; flex-direction: column; gap: 9px; }
+    .rung { display: flex; gap: 14px; align-items: flex-start; background: var(--surface); border: 1px solid var(--border); border-left-width: 3px; border-radius: 11px; padding: 15px 17px; }
+    .rung.l0 { border-left-color: var(--blue); }
+    .rung.l1 { border-left-color: var(--yellow); }
+    .rung.l2 { border-left-color: var(--green); }
+    .rung.never { border-left-color: var(--red); }
+    .rung-badge { font-size: 0.66rem; font-weight: 700; padding: 3px 9px; border-radius: 7px; white-space: nowrap; flex-shrink: 0; margin-top: 1px; }
+    .rung.l0 .rung-badge { background: rgba(96,165,250,0.12); color: var(--blue); }
+    .rung.l1 .rung-badge { background: rgba(251,191,36,0.12); color: var(--yellow); }
+    .rung.l2 .rung-badge { background: rgba(74,222,128,0.12); color: var(--green); }
+    .rung.never .rung-badge { background: rgba(248,113,113,0.12); color: var(--red); }
+    .rung-body .rung-title { font-size: 0.88rem; font-weight: 650; margin-bottom: 3px; }
+    .rung-body .rung-desc { font-size: 0.79rem; color: var(--muted); line-height: 1.55; }
+
+    /* Blind spots */
+    .bs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 11px; }
+    .bs-card { background: linear-gradient(180deg, rgba(248,113,113,0.04), transparent); border: 1px solid rgba(248,113,113,0.22); border-radius: 13px; padding: 17px; }
+    .bs-card .bs-head { font-size: 0.88rem; font-weight: 650; margin-bottom: 7px; display: flex; gap: 7px; align-items: baseline; }
+    .bs-card .bs-head .bs-n { color: var(--red); font-weight: 700; font-size: 0.8rem; }
+    .bs-card .bs-risk { font-size: 0.78rem; color: var(--muted); line-height: 1.55; margin-bottom: 10px; }
+    .bs-card .bs-fix { font-size: 0.78rem; color: #9fe8c0; line-height: 1.55; border-top: 1px solid rgba(248,113,113,0.15); padding-top: 9px; }
+    .bs-card .bs-fix b { color: var(--green); }
+
+    /* Build phases */
+    .phases { display: flex; flex-direction: column; gap: 9px; }
+    .phase { display: flex; gap: 15px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; align-items: flex-start; }
+    .phase-tag { font-size: 0.72rem; font-weight: 700; color: var(--purple); white-space: nowrap; flex-shrink: 0; min-width: 62px; margin-top: 1px; }
+    .phase-body .phase-title { font-size: 0.9rem; font-weight: 650; margin-bottom: 4px; }
+    .phase-body .phase-desc { font-size: 0.8rem; color: var(--muted); line-height: 1.55; }
+    .phase-cost { font-size: 0.68rem; padding: 2px 8px; border-radius: 6px; background: rgba(74,222,128,0.1); color: var(--green); font-weight: 600; margin-left: 8px; }
+    .phase-cost.med { background: rgba(251,191,36,0.1); color: var(--yellow); }
+
+    .footer { max-width: 980px; margin: 0 auto; padding: 10px 20px 50px; color: var(--dim); font-size: 0.72rem; line-height: 1.6; }
+
+    @media (max-width: 560px) {
+      .roster-grid, .bs-grid { grid-template-columns: 1fr; }
+      .pipeline { flex-direction: column; }
+      .stage { min-width: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="nav">
+  <div class="nav-inner">
+    <a href="ai-automation-hub.html">← Automation Stack</a>
+    <a href="agentic-assistant.html" class="active">The Dispatcher</a>
+    <span class="spacer"></span>
+    <span class="tag">design v0.1</span>
+  </div>
+</div>
+
+<div class="header">
+  <div class="eyebrow">◆ Agentic Assistant</div>
+  <h1>The Dispatcher</h1>
+  <p class="lede">
+    One layer above the overnight worker. You hand it a task — or it <b>writes its own</b> — and it figures out
+    the type, pulls the right context from memory + repos, picks a <b>specialized agent</b>, makes it plan first,
+    runs it under guardrails, and hands back a clean result. The overnight worker, generalized to <b>any task, any project, any time.</b>
+  </p>
+</div>
+
+<!-- PIPELINE -->
+<div class="section">
+  <div class="section-title">The pipeline</div>
+  <div class="section-sub">Every task — yours or self-generated — flows through the same 7 stages. Tap a stage.</div>
+  <div class="pipeline" id="pipeline"></div>
+  <div class="stage-detail" id="stageDetail"></div>
+</div>
+
+<!-- TWO MODES -->
+<div class="section">
+  <div class="section-title">Two ways in</div>
+  <div class="mode-wrap">
+    <button class="mode-btn active" onclick="setMode('directed',this)">📥 Directed</button>
+    <button class="mode-btn" onclick="setMode('proactive',this)">💡 Proactive</button>
+  </div>
+  <div class="mode-panel" id="modePanel"></div>
+</div>
+
+<!-- TASK SPEC -->
+<div class="section">
+  <div class="section-title">The task spec</div>
+  <div class="section-sub">Generalized from the overnight worker's <code>tonight.md</code> + <code>CONTRACT.md</code>. One file, any task. Drop it in <code>.claude/missions/</code> or fire it from chat/Telegram.</div>
+  <pre id="specBlock"></pre>
+</div>
+
+<!-- AGENT ROSTER -->
+<div class="section">
+  <div class="section-title">Who gets the job</div>
+  <div class="section-sub">The Dispatcher classifies the task, then routes to a specialist — your existing agent teams + Claude Code subagent types. Single agent for simple work; a swarm for broad/parallel work.</div>
+  <div class="roster-grid" id="roster"></div>
+</div>
+
+<!-- AUTONOMY LADDER -->
+<div class="section">
+  <div class="section-title">How much rope it gets</div>
+  <div class="section-sub">Autonomy is per-task-type and earned. New task types start at L0; promote toward full-auto only as trust builds. Some things never auto.</div>
+  <div class="ladder" id="ladder"></div>
+</div>
+
+<!-- BLIND SPOTS -->
+<div class="section">
+  <div class="section-title">⚠ Blind spots — read before building</div>
+  <div class="section-sub">Two of these can sink it. Surfaced on purpose so they don't ambush you in month three.</div>
+  <div class="bs-grid" id="blindspots"></div>
+</div>
+
+<!-- BUILD PATH -->
+<div class="section">
+  <div class="section-title">Cheapest viable path</div>
+  <div class="section-sub">Don't build a new system. This is <b>conventions + one dispatcher skill</b> on top of what already runs. Each phase ships standalone value.</div>
+  <div class="phases" id="phases"></div>
+</div>
+
+<div class="footer">
+  Design doc · v0.1 · Builds on: overnight worker (memory #74), agent teams (Feature Dev / API Integration / Deployment / Security &amp; Audit / Python Explorer), autonomy R&amp;D (memory #31). Optimization target — see Blind Spot #1.
+</div>
+
+<script>
+// ── PIPELINE ──
+const stages = [
+  {n:'01', name:'Intake', tool:'task.md · chat · Telegram · self', detail:'<b>Task arrives</b> from any source: a dropped <code>mission.md</code> file, a chat one-liner, a Telegram message, a recurring trigger, or the Dispatcher\'s own proactive scan. All normalize to one task spec.'},
+  {n:'02', name:'Understand', tool:'classify + memory MCP', detail:'<b>Parse intent.</b> Classify type (code / research / ops / content / outreach / data), match it to a project, gauge complexity (single agent vs swarm), and pull live state via <code>get_session_context</code> so it knows what\'s already in flight.'},
+  {n:'03', name:'Dispatch', tool:'pick specialist', detail:'<b>Select the agent(s).</b> Map task type → specialized agent profile (your teams + subagent types). Simple = one agent. Broad/parallel = a swarm via the Workflow tool, fanned out by sub-task.'},
+  {n:'04', name:'Context', tool:'repo + memory + CONTRACT', detail:'<b>Assemble the brief.</b> Relevant repo files (github MCP), memory of prior decisions + verdicts (so it doesn\'t redo work), and the CONTRACT — hard constraints on what it must never touch.'},
+  {n:'05', name:'Plan', tool:'plan-first + risk gate', detail:'<b>Agent drafts a plan before acting.</b> Low-risk → proceeds. High-risk (prod, money, external, secrets) → stops at the gate and pings you for a yes/no before a single write.'},
+  {n:'06', name:'Execute', tool:'worktree / branch isolation', detail:'<b>Do the work</b> in an isolated branch or git worktree (parallel agents never collide). Verify locally — tsc, build, tests — before anything is considered done.'},
+  {n:'07', name:'Handoff', tool:'HANDOFF.md + Todoist + Telegram', detail:'<b>Close the loop.</b> Write a <code>HANDOFF-&lt;date&gt;.md</code> to schema, push the branch, create a Todoist review task with deep links, and ping Telegram. You wake up to a result, not a mess.'},
+];
+const pipeEl = document.getElementById('pipeline');
+const detEl = document.getElementById('stageDetail');
+pipeEl.innerHTML = stages.map((s,i)=>`
+  <div class="stage${i===0?' active':''}" data-i="${i}" onclick="pickStage(${i})">
+    <div class="stage-num">${s.n}</div>
+    <div class="stage-name">${s.name}</div>
+    <div class="stage-tool">${s.tool}</div>
+  </div>`).join('');
+function pickStage(i){
+  document.querySelectorAll('.stage').forEach(s=>s.classList.remove('active'));
+  document.querySelector(`.stage[data-i="${i}"]`).classList.add('active');
+  detEl.innerHTML = stages[i].detail;
+}
+pickStage(0);
+
+// ── MODES ──
+const modes = {
+  directed: {
+    title: '📥 Directed — you set the task',
+    desc: 'You know what you want done. Drop a spec or fire a one-liner; the Dispatcher executes under guardrails. This is your overnight worker today — just generalized to any task type and any time of day.',
+    examples: ['"Audit the nailsalon storage.rules for the payment-slips hole and fix it."', '"Research SEA competitors for the ad-anomaly idea, write a brief to Drive."', '"Rotate the leaked LINE secret across both channels + Vercel, then verify login."']
+  },
+  proactive: {
+    title: '💡 Proactive — it sets the task',
+    desc: 'The Dispatcher reads every project\'s open loops from memory MCP, finds the single highest-leverage next action, drafts the spec itself, and either queues it for your yes/no or runs it (if the type is trusted). This is the creative half — but it\'s also Blind Spot #2, so it ships gated.',
+    examples: ['Notices 3 nailsalon security loops untouched 5 days → drafts a "fix security backlog" mission, queues for approval.', 'Sees a prospect\'s follow_up_date passed → drafts a personalized LINE nudge, saves as Todoist draft.', 'Memory MCP repo/live divergence flagged repeatedly → proposes a reconcile-and-deploy task.']
+  }
+};
+function setMode(m, btn){
+  document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const d = modes[m];
+  document.getElementById('modePanel').innerHTML =
+    `<h3>${d.title}</h3><p>${d.desc}</p>` +
+    d.examples.map(e=>`<div style="font-size:0.82rem;color:#cbd5e1;background:#0a0a0a;border:1px solid var(--border);border-radius:9px;padding:10px 13px;margin-bottom:7px;line-height:1.5;">${e}</div>`).join('');
+}
+setMode('directed', document.querySelector('.mode-btn'));
+
+// ── TASK SPEC ──
+document.getElementById('specBlock').innerHTML =
+`<span class="c"># missions/fix-storage-rules.md</span>
+<span class="k">task:</span>      <span class="v">Scope payment-slips storage.rules to the booking owner</span>
+<span class="k">project:</span>   <span class="v">nailsalon</span>
+<span class="k">type:</span>      <span class="v">code · security</span>
+<span class="k">priority:</span>  <span class="v">p1</span>
+<span class="k">agent:</span>     <span class="v">auto</span>            <span class="c"># or: security-auditor</span>
+<span class="k">context:</span>
+  <span class="k">- memory:</span> <span class="s">"storage.rules payment-slips hole"</span>
+  <span class="k">- repo:</span>   <span class="s">invinv/nailsalon</span>  <span class="k">paths:</span> <span class="s">[storage.rules]</span>
+<span class="k">constraints:</span>
+  <span class="k">-</span> <span class="s">never push to main without local build passing</span>
+  <span class="k">-</span> <span class="s">never touch overnight-control / audit-reports branches</span>
+  <span class="k">-</span> <span class="s">deploy is manual — stop after the fix, do not vercel --prod</span>
+<span class="k">autonomy:</span>  <span class="v">execute-with-review</span>   <span class="c"># L1 — I review the handoff before it ships</span>
+<span class="k">output:</span>    <span class="v">HANDOFF.md + Todoist task + Telegram ping</span>`;
+
+// ── ROSTER ──
+const roster = [
+  {type:'Code feature', name:'Feature Dev team', desc:'Scaffolds + implements new functionality. Worker pool, parallel, reviewer pass before handoff.'},
+  {type:'Bug / review', name:'reviewer → auditor', desc:'Phase-3 reviewer fixes, Phase-4 auditor verifies. Fresh eyes, write access to patch.'},
+  {type:'Security', name:'security-auditor (Opus)', desc:'OWASP, auth holes, injection, hardcoded secrets. Read-only until a fix is confirmed.'},
+  {type:'Research', name:'Explore swarm → synth', desc:'Fan-out readers/searchers (haiku, cheap) → one synthesis agent. Multi-angle, fast.'},
+  {type:'Ops / deploy', name:'Deployment team', desc:'Build, deploy, verify. Always gated — prod ships need explicit approval.'},
+  {type:'Content', name:'Drafter', desc:'Posts, briefs, docs. Drafts to Drive/Doc; never auto-publishes external.'},
+  {type:'Outreach', name:'DM drafter', desc:'Personalized LINE/IG per prospect profile. Saves as Todoist draft — you hit send.'},
+  {type:'Data / scrape', name:'API Integration team', desc:'Maps scraping, API pulls, Supabase writes. Populates prospects table, watchlists.'},
+];
+document.getElementById('roster').innerHTML = roster.map(r=>`
+  <div class="agent-card">
+    <div class="ac-type">${r.type}</div>
+    <div class="ac-name">${r.name}</div>
+    <div class="ac-desc">${r.desc}</div>
+  </div>`).join('');
+
+// ── LADDER ──
+const ladder = [
+  {cls:'l0', badge:'L0 · Propose', title:'Drafts task + plan, you approve everything', desc:'Default for any new or unproven task type. Zero writes until you say go. This is where every task type starts.'},
+  {cls:'l1', badge:'L1 · Review', title:'Does the work, you review the handoff before it ships/merges', desc:'The sweet spot for most work. Branch isolated, verified locally, waiting for your nod. Same trust level as the overnight worker today.'},
+  {cls:'l2', badge:'L2 · Full-auto', title:'Ships without review', desc:'Earned, and only for low-blast-radius work: this repo, internal dashboards, docs, drafts. Promote a task type here only after it\'s proven clean repeatedly.'},
+  {cls:'never', badge:'⛔ Never-auto', title:'Always gated, no exceptions', desc:'Prod deploys · money movement · external messages (LINE/IG/email sends) · secrets/credentials · git history rewrites. These stop at the gate forever.'},
+];
+document.getElementById('ladder').innerHTML = ladder.map(l=>`
+  <div class="rung ${l.cls}">
+    <span class="rung-badge">${l.badge}</span>
+    <div class="rung-body"><div class="rung-title">${l.title}</div><div class="rung-desc">${l.desc}</div></div>
+  </div>`).join('');
+
+// ── BLIND SPOTS ──
+const bs = [
+  {n:'#1', head:'No optimization target', risk:'A system in motion with no stated goal — your documented failure mode. "More AI doing things" isn\'t a metric. Without one, this becomes a cool machine that moves no needle.', fix:'<b>Target: hours/week of YOUR manual work removed</b>, on tasks you\'d otherwise do yourself. Kill criterion: if it just creates a review queue you have to babysit, it failed — that\'s worse than nothing.'},
+  {n:'#2', head:'Proactive mode breeds busywork', risk:'An assistant that "creates tasks for me" can spew 10 plausible tasks/day. You hate valueless repetitive work — this could manufacture a fresh inbox of it, plus review load.', fix:'<b>Hard filter:</b> proactive mode may only propose tasks that unblock a stated goal or an existing open loop in memory. No goal link → no task. Cap at N proposals/week.'},
+  {n:'#3', head:'You don\'t need a new system', risk:'The temptation is to build a big new orchestrator. But the overnight worker, agent teams, and Claude Code already do 80% of this. A new system = new thing to maintain (you optimize for low-friction).', fix:'<b>Ship conventions + ONE dispatcher skill.</b> Standardize the task spec, write a skill that reads it and routes. No new infra, no new service.'},
+  {n:'#4', head:'Autonomy on live repos is dangerous', risk:'nailsalon has prod traffic and a leaked-secret history. Full-auto code that pushes or deploys can break customers or leak credentials. "Creative" agents inventing tasks on prod is a nightmare.', fix:'<b>The never-auto list is law.</b> Prod / money / external / secrets / history are always gated. Full-auto only earns its way in on sandbox-grade work.'},
+  {n:'#5', head:'Where does it live?', risk:'A scheduled overnighter (claude.ai Routine) and a responsive "do this now" assistant are different homes with different powers. Conflating them gives you a thing that\'s good at neither.', fix:'<b>Pick per mode:</b> Proactive scan = weekly Routine (cloud, scheduled). Directed "now" tasks = local Claude Code skill. VPS only if it must run headless + unattended.'},
+  {n:'#6', head:'Token cost compounds', risk:'Per-task agent spin-up + a swarm here and there + constant proactive scanning = real spend. Easy to wake up to a big bill from an agent that looped.', fix:'<b>Budget per task type</b> and log what gets dropped. Proactive scan runs weekly, not hourly. Your spending card already tracks this — point it at agent spend.'},
+];
+document.getElementById('blindspots').innerHTML = bs.map(b=>`
+  <div class="bs-card">
+    <div class="bs-head"><span class="bs-n">${b.n}</span> ${b.head}</div>
+    <div class="bs-risk">${b.risk}</div>
+    <div class="bs-fix">${b.fix}</div>
+  </div>`).join('');
+
+// ── PHASES ──
+const phases = [
+  {tag:'Phase 0', title:'Standardize the task spec', cost:'free', desc:'Generalize tonight.md + CONTRACT.md into the one mission.md schema above. Pure convention — zero new infra. You can hand-write missions today.'},
+  {tag:'Phase 1', title:'The Dispatcher skill', cost:'low', desc:'A Claude Code skill: reads a mission.md, classifies, assembles context from memory + repo, picks the agent, runs plan-first, writes the handoff. Local, on demand.'},
+  {tag:'Phase 2', title:'Proactive scan (gated)', cost:'med', desc:'Weekly Routine reads memory MCP open loops → drafts mission.md proposals into a queue → you approve. Tight goal-filter from Blind Spot #2.'},
+  {tag:'Phase 3', title:'Autonomy ladder + CONTRACT', cost:'low', desc:'Wire the L0→L2 promotion + never-auto guardrails. Start everything at L1. Promote task types to full-auto only as they prove clean.'},
+  {tag:'Phase 4', title:'Multi-source intake', cost:'med', desc:'Telegram → mission, chat → mission, handoff back to Telegram. The responsive "do this now from my phone" layer. Build last, only if Phases 0–3 earn it.'},
+];
+document.getElementById('phases').innerHTML = phases.map(p=>`
+  <div class="phase">
+    <span class="phase-tag">${p.tag}</span>
+    <div class="phase-body">
+      <div class="phase-title">${p.title}<span class="phase-cost ${p.cost==='med'?'med':''}">${p.cost} effort</span></div>
+      <div class="phase-desc">${p.desc}</div>
+    </div>
+  </div>`).join('');
+</script>
+</body>
+</html>
