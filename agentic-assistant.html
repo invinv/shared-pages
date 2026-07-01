@@ -100,10 +100,15 @@
     .bs-card .bs-risk { font-size: 0.78rem; color: var(--muted); line-height: 1.55; margin-bottom: 10px; }
     .bs-card .bs-fix { font-size: 0.78rem; color: #9fe8c0; line-height: 1.55; border-top: 1px solid rgba(248,113,113,0.15); padding-top: 9px; }
     .bs-card .bs-fix b { color: var(--green); }
+    .bs-affects { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+    .bs-affects-label { font-size: 0.68rem; color: var(--dim); align-self: center; }
+    .bs-affects a { font-size: 0.68rem; font-weight: 600; color: var(--purple); border: 1px solid rgba(167,139,250,0.35); background: rgba(167,139,250,0.08); padding: 2px 9px; border-radius: 20px; text-decoration: none; cursor: pointer; transition: all 0.12s; }
+    .bs-affects a:hover { background: rgba(167,139,250,0.2); border-color: var(--purple); }
 
     /* Build phases */
     .phases { display: flex; flex-direction: column; gap: 9px; }
-    .phase { display: flex; gap: 15px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; align-items: flex-start; }
+    .phase { display: flex; gap: 15px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; align-items: flex-start; transition: border-color 0.3s, box-shadow 0.3s; }
+    .phase.highlight { border-color: var(--purple); box-shadow: 0 0 0 1px var(--purple); }
     .phase-tag { font-size: 0.72rem; font-weight: 700; color: var(--purple); white-space: nowrap; flex-shrink: 0; min-width: 62px; margin-top: 1px; }
     .phase-body .phase-title { font-size: 0.9rem; font-weight: 650; margin-bottom: 4px; }
     .phase-body .phase-desc { font-size: 0.8rem; color: var(--muted); line-height: 1.55; }
@@ -297,30 +302,39 @@ document.getElementById('ladder').innerHTML = ladder.map(l=>`
 
 // ── BLIND SPOTS ──
 const bs = [
-  {n:'#1', head:'No optimization target', risk:'A system in motion with no stated goal — your documented failure mode. "More AI doing things" isn\'t a metric. Without one, this becomes a cool machine that moves no needle.', fix:'<b>Target: hours/week of YOUR manual work removed</b>, on tasks you\'d otherwise do yourself. Kill criterion: if it just creates a review queue you have to babysit, it failed — that\'s worse than nothing.'},
-  {n:'#2', head:'Proactive mode breeds busywork', risk:'An assistant that "creates tasks for me" can spew 10 plausible tasks/day. You hate valueless repetitive work — this could manufacture a fresh inbox of it, plus review load.', fix:'<b>Hard filter:</b> proactive mode may only propose tasks that unblock a stated goal or an existing open loop in memory. No goal link → no task. Cap at N proposals/week.'},
-  {n:'#3', head:'You don\'t need a new system', risk:'The temptation is to build a big new orchestrator. But the overnight worker, agent teams, and Claude Code already do 80% of this. A new system = new thing to maintain (you optimize for low-friction).', fix:'<b>Ship conventions + ONE dispatcher skill.</b> Standardize the task spec, write a skill that reads it and routes. No new infra, no new service.'},
-  {n:'#4', head:'Autonomy on live repos is dangerous', risk:'nailsalon has prod traffic and a leaked-secret history. Full-auto code that pushes or deploys can break customers or leak credentials. "Creative" agents inventing tasks on prod is a nightmare.', fix:'<b>The never-auto list is law.</b> Prod / money / external / secrets / history are always gated. Full-auto only earns its way in on sandbox-grade work.'},
-  {n:'#5', head:'Where does it live?', risk:'A scheduled overnighter (claude.ai Routine) and a responsive "do this now" assistant are different homes with different powers. Conflating them gives you a thing that\'s good at neither.', fix:'<b>Pick per mode:</b> Proactive scan = weekly Routine (cloud, scheduled). Directed "now" tasks = local Claude Code skill. VPS only if it must run headless + unattended.'},
-  {n:'#6', head:'Token cost compounds', risk:'Per-task agent spin-up + a swarm here and there + constant proactive scanning = real spend. Easy to wake up to a big bill from an agent that looped.', fix:'<b>Budget per task type</b> and log what gets dropped. Proactive scan runs weekly, not hourly. Your spending card already tracks this — point it at agent spend.'},
+  {n:'#1', head:'No optimization target', risk:'"More AI doing things" isn\'t a metric — your documented failure mode. No stated goal, no way to know if this is helping.', fix:'<b>Target: hours/week of YOUR manual work removed.</b> If it just creates a review queue you have to babysit, it failed.', affects:['phase-0']},
+  {n:'#2', head:'Proactive mode breeds busywork', risk:'An assistant that "creates tasks for me" can spew 10 plausible-but-worthless tasks a day — a fresh inbox of review load.', fix:'<b>Hard filter:</b> a proposal must unblock a stated goal or existing open loop in memory. No goal link → no task. Cap N/week.', affects:['phase-2']},
+  {n:'#3', head:'You don\'t need a new system', risk:'The overnight worker, agent teams, and Claude Code already do 80% of this. A new orchestrator is just a new thing to maintain.', fix:'<b>Ship conventions + ONE dispatcher skill.</b> Standardize the task spec, route through what already runs. No new infra.', affects:['phase-1']},
+  {n:'#4', head:'Autonomy on live repos is dangerous', risk:'nailsalon has prod traffic and a leaked-secret history. Full-auto pushes or deploys can break customers or leak credentials.', fix:'<b>The never-auto list is law.</b> Prod / money / external / secrets / history are always gated, no exceptions.', affects:['phase-3']},
+  {n:'#5', head:'Where does it live?', risk:'A scheduled overnighter and a responsive "do this now" assistant are different homes with different powers — conflating them serves neither well.', fix:'<b>Pick per mode:</b> proactive scan = weekly cloud Routine. Directed "now" tasks = local Claude Code skill.', affects:['phase-2','phase-4']},
+  {n:'#6', head:'Token cost compounds', risk:'Per-task spin-up + swarms + constant proactive scanning adds up fast — easy to wake up to a big bill from a looping agent.', fix:'<b>Budget per task type</b>, log what gets dropped. Proactive scan runs weekly, not hourly.', affects:['phase-2']},
 ];
+const phaseLabel = id => id.replace('phase-', 'Phase ');
+function jumpToPhase(id){
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.scrollIntoView({behavior:'smooth', block:'center'});
+  el.classList.add('highlight');
+  setTimeout(()=>el.classList.remove('highlight'), 1500);
+}
 document.getElementById('blindspots').innerHTML = bs.map(b=>`
   <div class="bs-card">
     <div class="bs-head"><span class="bs-n">${b.n}</span> ${b.head}</div>
     <div class="bs-risk">${b.risk}</div>
     <div class="bs-fix">${b.fix}</div>
+    <div class="bs-affects"><span class="bs-affects-label">affects</span> ${b.affects.map(id=>`<a onclick="jumpToPhase('${id}')">${phaseLabel(id)}</a>`).join('')}</div>
   </div>`).join('');
 
 // ── PHASES ──
 const phases = [
-  {tag:'Phase 0', title:'Standardize the task spec', cost:'free', desc:'Generalize tonight.md + CONTRACT.md into the one mission.md schema above. Pure convention — zero new infra. You can hand-write missions today.'},
-  {tag:'Phase 1', title:'The Dispatcher skill', cost:'low', desc:'A Claude Code skill: reads a mission.md, classifies, assembles context from memory + repo, picks the agent, runs plan-first, writes the handoff. Local, on demand.'},
-  {tag:'Phase 2', title:'Proactive scan (gated)', cost:'med', desc:'Weekly Routine reads memory MCP open loops → drafts mission.md proposals into a queue → you approve. Tight goal-filter from Blind Spot #2.'},
-  {tag:'Phase 3', title:'Autonomy ladder + CONTRACT', cost:'low', desc:'Wire the L0→L2 promotion + never-auto guardrails. Start everything at L1. Promote task types to full-auto only as they prove clean.'},
-  {tag:'Phase 4', title:'Multi-source intake', cost:'med', desc:'Telegram → mission, chat → mission, handoff back to Telegram. The responsive "do this now from my phone" layer. Build last, only if Phases 0–3 earn it.'},
+  {id:'phase-0', tag:'Phase 0', title:'Standardize the task spec', cost:'free', desc:'Generalize tonight.md + CONTRACT.md into the one mission.md schema above. Pure convention — zero new infra. You can hand-write missions today. <b>Ship with the metric written down: hours/week of manual work removed. No metric → don\'t build (Blind Spot #1).</b>'},
+  {id:'phase-1', tag:'Phase 1', title:'The Dispatcher skill', cost:'low', desc:'A Claude Code skill: reads a mission.md, classifies, assembles context from memory + repo, picks the agent, runs plan-first, writes the handoff. Local, on demand. One skill, not a new orchestrator (Blind Spot #3).'},
+  {id:'phase-2', tag:'Phase 2', title:'Proactive scan (gated)', cost:'med', desc:'Weekly Routine reads memory MCP open loops → drafts mission.md proposals into a queue → you approve. <b>Cap proposals at 5/week; each must cite a memory open-loop or stated goal — no goal link, no task (Blind Spot #2).</b> Weekly cadence keeps token spend bounded (Blind Spot #6).'},
+  {id:'phase-3', tag:'Phase 3', title:'Autonomy ladder + CONTRACT', cost:'low', desc:'Wire the L0→L2 promotion + never-auto guardrails. Start everything at L1. Promote task types to full-auto only as they prove clean — prod/money/external/secrets/history stay gated forever (Blind Spot #4).'},
+  {id:'phase-4', tag:'Phase 4', title:'Multi-source intake', cost:'med', desc:'Telegram → mission, chat → mission, handoff back to Telegram. The responsive "do this now from my phone" layer, kept separate from the scheduled scan (Blind Spot #5). Build last, only if Phases 0–3 earn it.'},
 ];
 document.getElementById('phases').innerHTML = phases.map(p=>`
-  <div class="phase">
+  <div class="phase" id="${p.id}">
     <span class="phase-tag">${p.tag}</span>
     <div class="phase-body">
       <div class="phase-title">${p.title}<span class="phase-cost ${p.cost==='med'?'med':''}">${p.cost} effort</span></div>
