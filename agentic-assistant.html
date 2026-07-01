@@ -131,7 +131,7 @@
     <a href="ai-automation-hub.html">← Automation Stack</a>
     <a href="agentic-assistant.html" class="active">The Dispatcher</a>
     <span class="spacer"></span>
-    <span class="tag">design v0.1</span>
+    <span class="tag">design v0.2</span>
   </div>
 </div>
 
@@ -139,7 +139,7 @@
   <div class="eyebrow">◆ Agentic Assistant</div>
   <h1>The Dispatcher</h1>
   <p class="lede">
-    One layer above the overnight worker. You hand it a task — or it <b>writes its own</b> — and it figures out
+    One layer above the overnight worker. You hand it a task and it figures out
     the type, pulls the right context from memory + repos, picks a <b>specialized agent</b>, makes it plan first,
     runs it under guardrails, and hands back a clean result. The overnight worker, generalized to <b>any task, any project, any time.</b>
   </p>
@@ -148,18 +148,14 @@
 <!-- PIPELINE -->
 <div class="section">
   <div class="section-title">The pipeline</div>
-  <div class="section-sub">Every task — yours or self-generated — flows through the same 7 stages. Tap a stage.</div>
+  <div class="section-sub">Every task you hand it flows through the same 7 stages. Tap a stage.</div>
   <div class="pipeline" id="pipeline"></div>
   <div class="stage-detail" id="stageDetail"></div>
 </div>
 
-<!-- TWO MODES -->
+<!-- HOW WORK COMES IN -->
 <div class="section">
-  <div class="section-title">Two ways in</div>
-  <div class="mode-wrap">
-    <button class="mode-btn active" onclick="setMode('directed',this)">📥 Directed</button>
-    <button class="mode-btn" onclick="setMode('proactive',this)">💡 Proactive</button>
-  </div>
+  <div class="section-title">How work comes in</div>
   <div class="mode-panel" id="modePanel"></div>
 </div>
 
@@ -205,7 +201,7 @@
 <script>
 // ── PIPELINE ──
 const stages = [
-  {n:'01', name:'Intake', tool:'task.md · chat · Telegram · self', detail:'<b>Task arrives</b> from any source: a dropped <code>mission.md</code> file, a chat one-liner, a Telegram message, a recurring trigger, or the Dispatcher\'s own proactive scan. All normalize to one task spec.'},
+  {n:'01', name:'Intake', tool:'task.md · chat · Telegram', detail:'<b>Task arrives</b> from you: a dropped <code>mission.md</code> file, a chat one-liner, or a Telegram message. All normalize to one task spec.'},
   {n:'02', name:'Understand', tool:'classify + memory MCP', detail:'<b>Parse intent.</b> Classify type (code / research / ops / content / outreach / data), match it to a project, gauge complexity (single agent vs swarm), and pull live state via <code>get_session_context</code> so it knows what\'s already in flight.'},
   {n:'03', name:'Dispatch', tool:'pick specialist', detail:'<b>Select the agent(s).</b> Map task type → specialized agent profile (your teams + subagent types). Simple = one agent. Broad/parallel = a swarm via the Workflow tool, fanned out by sub-task.'},
   {n:'04', name:'Context', tool:'repo + memory + CONTRACT', detail:'<b>Assemble the brief.</b> Relevant repo files (github MCP), memory of prior decisions + verdicts (so it doesn\'t redo work), and the CONTRACT — hard constraints on what it must never touch.'},
@@ -228,28 +224,15 @@ function pickStage(i){
 }
 pickStage(0);
 
-// ── MODES ──
-const modes = {
-  directed: {
-    title: '📥 Directed — you set the task',
-    desc: 'You know what you want done. Drop a spec or fire a one-liner; the Dispatcher executes under guardrails. This is your overnight worker today — just generalized to any task type and any time of day.',
-    examples: ['"Audit the nailsalon storage.rules for the payment-slips hole and fix it."', '"Research SEA competitors for the ad-anomaly idea, write a brief to Drive."', '"Rotate the leaked LINE secret across both channels + Vercel, then verify login."']
-  },
-  proactive: {
-    title: '💡 Proactive — it sets the task',
-    desc: 'The Dispatcher reads every project\'s open loops from memory MCP, finds the single highest-leverage next action, drafts the spec itself, and either queues it for your yes/no or runs it (if the type is trusted). This is the creative half — but it\'s also Blind Spot #2, so it ships gated.',
-    examples: ['Notices 3 nailsalon security loops untouched 5 days → drafts a "fix security backlog" mission, queues for approval.', 'Sees a prospect\'s follow_up_date passed → drafts a personalized LINE nudge, saves as Todoist draft.', 'Memory MCP repo/live divergence flagged repeatedly → proposes a reconcile-and-deploy task.']
-  }
+// ── HOW WORK COMES IN ──
+const directedMode = {
+  title: '📥 Directed — you set the task',
+  desc: 'You know what you want done. Drop a spec or fire a one-liner; the Dispatcher executes under guardrails. This is your overnight worker today — just generalized to any task type and any time of day. No proactive/self-generated mode — it only ever does what you tell it.',
+  examples: ['"Audit the nailsalon storage.rules for the payment-slips hole and fix it."', '"Research SEA competitors for the ad-anomaly idea, write a brief to Drive."', '"Rotate the leaked LINE secret across both channels + Vercel, then verify login."']
 };
-function setMode(m, btn){
-  document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  const d = modes[m];
-  document.getElementById('modePanel').innerHTML =
-    `<h3>${d.title}</h3><p>${d.desc}</p>` +
-    d.examples.map(e=>`<div style="font-size:0.82rem;color:#cbd5e1;background:#0a0a0a;border:1px solid var(--border);border-radius:9px;padding:10px 13px;margin-bottom:7px;line-height:1.5;">${e}</div>`).join('');
-}
-setMode('directed', document.querySelector('.mode-btn'));
+document.getElementById('modePanel').innerHTML =
+  `<h3>${directedMode.title}</h3><p>${directedMode.desc}</p>` +
+  directedMode.examples.map(e=>`<div style="font-size:0.82rem;color:#cbd5e1;background:#0a0a0a;border:1px solid var(--border);border-radius:9px;padding:10px 13px;margin-bottom:7px;line-height:1.5;">${e}</div>`).join('');
 
 // ── TASK SPEC ──
 document.getElementById('specBlock').innerHTML =
@@ -303,11 +286,9 @@ document.getElementById('ladder').innerHTML = ladder.map(l=>`
 // ── BLIND SPOTS ──
 const bs = [
   {n:'#1', head:'No optimization target', risk:'"More AI doing things" isn\'t a metric — your documented failure mode. No stated goal, no way to know if this is helping.', fix:'<b>Target: hours/week of YOUR manual work removed.</b> If it just creates a review queue you have to babysit, it failed.', affects:['phase-0']},
-  {n:'#2', head:'Proactive mode breeds busywork', risk:'An assistant that "creates tasks for me" can spew 10 plausible-but-worthless tasks a day — a fresh inbox of review load.', fix:'<b>Hard filter:</b> a proposal must unblock a stated goal or existing open loop in memory. No goal link → no task. Cap N/week.', affects:['phase-2']},
-  {n:'#3', head:'You don\'t need a new system', risk:'The overnight worker, agent teams, and Claude Code already do 80% of this. A new orchestrator is just a new thing to maintain.', fix:'<b>Ship conventions + ONE dispatcher skill.</b> Standardize the task spec, route through what already runs. No new infra.', affects:['phase-1']},
-  {n:'#4', head:'Autonomy on live repos is dangerous', risk:'nailsalon has prod traffic and a leaked-secret history. Full-auto pushes or deploys can break customers or leak credentials.', fix:'<b>The never-auto list is law.</b> Prod / money / external / secrets / history are always gated, no exceptions.', affects:['phase-3']},
-  {n:'#5', head:'Where does it live?', risk:'A scheduled overnighter and a responsive "do this now" assistant are different homes with different powers — conflating them serves neither well.', fix:'<b>Pick per mode:</b> proactive scan = weekly cloud Routine. Directed "now" tasks = local Claude Code skill.', affects:['phase-2','phase-4']},
-  {n:'#6', head:'Token cost compounds', risk:'Per-task spin-up + swarms + constant proactive scanning adds up fast — easy to wake up to a big bill from a looping agent.', fix:'<b>Budget per task type</b>, log what gets dropped. Proactive scan runs weekly, not hourly.', affects:['phase-2']},
+  {n:'#2', head:'You don\'t need a new system', risk:'The overnight worker, agent teams, and Claude Code already do 80% of this. A new orchestrator is just a new thing to maintain.', fix:'<b>Ship conventions + ONE dispatcher skill.</b> Standardize the task spec, route through what already runs. No new infra.', affects:['phase-1']},
+  {n:'#3', head:'Autonomy on live repos is dangerous', risk:'nailsalon has prod traffic and a leaked-secret history. Full-auto pushes or deploys can break customers or leak credentials.', fix:'<b>The never-auto list is law.</b> Prod / money / external / secrets / history are always gated, no exceptions.', affects:['phase-2']},
+  {n:'#4', head:'Token cost compounds', risk:'Per-task spin-up + a swarm here and there adds up fast — easy to wake up to a big bill from a looping agent.', fix:'<b>Budget per task type</b>, log what gets dropped. Only spend when you actually fire off a task.', affects:['phase-2']},
 ];
 const phaseLabel = id => id.replace('phase-', 'Phase ');
 function jumpToPhase(id){
@@ -328,10 +309,8 @@ document.getElementById('blindspots').innerHTML = bs.map(b=>`
 // ── PHASES ──
 const phases = [
   {id:'phase-0', tag:'Phase 0', title:'Standardize the task spec', cost:'free', desc:'Generalize tonight.md + CONTRACT.md into the one mission.md schema above. Pure convention — zero new infra. You can hand-write missions today. <b>Ship with the metric written down: hours/week of manual work removed. No metric → don\'t build (Blind Spot #1).</b>'},
-  {id:'phase-1', tag:'Phase 1', title:'The Dispatcher skill', cost:'low', desc:'A Claude Code skill: reads a mission.md, classifies, assembles context from memory + repo, picks the agent, runs plan-first, writes the handoff. Local, on demand. One skill, not a new orchestrator (Blind Spot #3).'},
-  {id:'phase-2', tag:'Phase 2', title:'Proactive scan (gated)', cost:'med', desc:'Weekly Routine reads memory MCP open loops → drafts mission.md proposals into a queue → you approve. <b>Cap proposals at 5/week; each must cite a memory open-loop or stated goal — no goal link, no task (Blind Spot #2).</b> Weekly cadence keeps token spend bounded (Blind Spot #6).'},
-  {id:'phase-3', tag:'Phase 3', title:'Autonomy ladder + CONTRACT', cost:'low', desc:'Wire the L0→L2 promotion + never-auto guardrails. Start everything at L1. Promote task types to full-auto only as they prove clean — prod/money/external/secrets/history stay gated forever (Blind Spot #4).'},
-  {id:'phase-4', tag:'Phase 4', title:'Multi-source intake', cost:'med', desc:'Telegram → mission, chat → mission, handoff back to Telegram. The responsive "do this now from my phone" layer, kept separate from the scheduled scan (Blind Spot #5). Build last, only if Phases 0–3 earn it.'},
+  {id:'phase-1', tag:'Phase 1', title:'The Dispatcher skill', cost:'low', desc:'A Claude Code skill: reads a mission.md, classifies, assembles context from memory + repo, picks the agent, runs plan-first, writes the handoff. Local, on demand. One skill, not a new orchestrator (Blind Spot #2).'},
+  {id:'phase-2', tag:'Phase 2', title:'Autonomy ladder + CONTRACT', cost:'low', desc:'Wire the L0→L2 promotion + never-auto guardrails. Start everything at L1. Promote task types to full-auto only as they prove clean — prod/money/external/secrets/history stay gated forever (Blind Spot #3). Once the skill is solid, extend intake to Telegram/chat → mission so you can fire off a task from your phone, not just a dropped file. Spend only happens when you actually direct a task, so cost stays bounded (Blind Spot #4).'},
 ];
 document.getElementById('phases').innerHTML = phases.map(p=>`
   <div class="phase" id="${p.id}">
